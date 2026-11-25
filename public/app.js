@@ -203,11 +203,15 @@ const SYNC_ICON = {
   off: CLOUD + '<path d="M3.5 3.5l17 17"/>',
   bad: CLOUD + '<path d="M12 10.5v3M12 15.8h.01"/>',
 };
-// last successful sync and the data version, in front of the icon (always short, in either language)
+// last successful sync, and the data version with the time of its newest change (always short, in either language)
 const infoTime = new Intl.DateTimeFormat('en-IN', { timeZone: TZ, hour: 'numeric', minute: '2-digit', hour12: true });
+const shortStamp = u => `${dmy(istDate.format(new Date(u))).slice(0, 5)}, ${infoTime.format(new Date(u))}`;
 function updateSyncInfo() {
   const el = $('#syncinfo'); if (!el) return;
-  el.innerHTML = meta.lastSync ? `<span>⟳ ${dmy(istDate.format(new Date(meta.lastSync)))}, ${esc(infoTime.format(new Date(meta.lastSync)))}</span><span>DB v${esc(meta.since || '—')}</span>` : '';
+  let changedAt = 0; // changes still waiting to be sent are not part of this version yet
+  for (const r of recs.values()) if (!r.dirty && r.u > changedAt) changedAt = r.u;
+  const ver = `v${meta.since || '—'}${changedAt ? ` · ${shortStamp(changedAt)}` : ''}`;
+  el.innerHTML = meta.lastSync ? `<span>⟳ ${esc(shortStamp(meta.lastSync))}</span><span>${esc(ver)}</span>` : '';
   el.title = `${t('lastSync')} · ${t('dataVer')}`;
 }
 function updateSyncBtn() {
