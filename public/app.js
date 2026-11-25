@@ -130,11 +130,14 @@ const pendingCount = () => (ro() ? 0 : [...recs.values()].filter(r => r.dirty).l
 function scheduleSync(ms = 1500) { updateSyncBtn(); clearTimeout(syncTimer); syncTimer = setTimeout(sync, ms); }
 // `again`: something changed while a sync was running. `loading`: still downloading the first copy, page by page.
 // `connection` goes up when the server or key changes, so a reply from the old one is thrown away.
-let again = false, loading = false, connection = 0;
+// `busy`: show the syncing icon. Quiet background checks that finish quickly leave the button as it is.
+let again = false, loading = false, busy = false, connection = 0;
 async function sync(manual) {
   if (syncing) { again = true; return; }
   if (!navigator.onLine) { if (manual === true) toast(t('offline')); return; }
+  busy = manual === true || syncErr || !meta.lastSync || pendingCount() > 0;
   syncing = true; again = false; syncErr = false; updateSyncBtn();
+  const slow = setTimeout(() => { busy = true; updateSyncBtn(); }, 1000);
   const abort = new AbortController(), timeout = setTimeout(() => abort.abort(), 30000); // a hung request must not block later syncs
   const url = (meta.server || '').replace(/\/$/, '') + '/api/sync', conn = connection;
   try {
@@ -174,7 +177,7 @@ async function sync(manual) {
     syncErr = true; syncMsg = e instanceof TypeError || e.name === 'AbortError' ? 'cannot reach server' : e.message;
     if (manual === true) toast(t('syncFail') + ' · ' + syncMsg);
   } finally {
-    clearTimeout(timeout); syncing = false;
+    clearTimeout(timeout); clearTimeout(slow); syncing = false;
     if (again && !syncErr) scheduleSync(200); // after a failure the regular timer retries
     updateSyncBtn(); if (tab === 'set') render(true);
   }
@@ -191,11 +194,23 @@ function newConnection() {
   connection++; saveMeta('mode', 'probe');
   startOver('').catch(() => {}).then(() => sync(true));
 }
+// header button: one cloud icon per state, with the count of unsent changes
+const CLOUD = '<path d="M7 18.5h10.5a4 4 0 0 0 .6-7.96A6 6 0 0 0 6.4 9.1 4.75 4.75 0 0 0 7 18.5Z"/>';
+const SYNC_ICON = {
+  ok: CLOUD + '<path d="M9 13.5l2.2 2.2 4-4"/>',
+  busy: '<path d="M20 11a8 8 0 0 0-14.5-4M4 4v4h4M4 13a8 8 0 0 0 14.5 4M20 20v-4h-4"/>',
+  pend: CLOUD + '<path d="M12 16v-5M9.7 13l2.3-2.3 2.3 2.3"/>',
+  off: CLOUD + '<path d="M3.5 3.5l17 17"/>',
+  bad: CLOUD + '<path d="M12 10.5v3M12 15.8h.01"/>',
+};
 function updateSyncBtn() {
   const b = $('#syncbtn'), p = pendingCount();
-  b.className = 'sync ' + (!navigator.onLine || syncErr ? 'off' : p ? 'pend' : '');
-  b.textContent = !navigator.onLine ? '⛔ ' + t('offline') + (p ? ` · ${p}` : '')
-    : syncing ? '⟳ …' : syncErr ? '⚠ ' + t('syncErrShort') + (p ? ` · ${p}` : '') : p ? `⟳ ${p} ${t('pending')}` : '✓ ' + t('synced');
+  const state = !navigator.onLine ? 'off' : syncing && busy ? 'busy' : syncErr ? 'bad' : p ? 'pend' : 'ok';
+  const label = { off: t('offline'), busy: t('syncNow'), bad: t('syncErrShort'), pend: `${p} ${t('pending')}`, ok: t('synced') }[state];
+  const count = p && state !== 'ok' && state !== 'busy' ? String(p) : '';
+  b.className = 'sync ' + state; b.title = label; b.setAttribute('aria-label', label);
+  const html = `<svg viewBox="0 0 24 24" aria-hidden="true">${SYNC_ICON[state]}</svg>${count ? `<b>${count}</b>` : ''}`;
+  if (b.dataset.shown !== html) { b.dataset.shown = html; b.innerHTML = html; } // unchanged: leave the spin running
 }
 addEventListener('online', () => { updateSyncBtn(); sync(); });
 addEventListener('offline', updateSyncBtn);

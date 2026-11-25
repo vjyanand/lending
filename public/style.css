@@ -10,7 +10,6 @@ header{position:sticky;top:0;z-index:5;background:var(--g);color:#fff;display:fl
 h1{font-size:18px;margin:0}
 .hr{display:flex;gap:8px;align-items:center}
 .sync{border:0;border-radius:99px;padding:6px 12px;font-size:13px;background:rgba(255,255,255,.2);color:#fff}
-.sync.off{background:#b71c1c}.sync.pend{background:#e65100}
 #robadge[hidden]{display:none}
 
 /* ===== Bottom navigation ===== */
@@ -122,3 +121,11 @@ select,textarea{font:inherit;padding:11px;border:1px solid var(--bd);border-radi
 ol.help{margin:0;padding-left:20px}ol.help li{margin:6px 0}
 ol.help a{color:var(--g);font-weight:600;word-break:break-all}
 .dpick>span{font-weight:600}
+
+/* ===== Sync status button (cloud icons) ===== */
+.sync{display:flex;align-items:center;gap:5px;min-height:34px;padding:5px 11px}
+.sync svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sync.ok{background:#2e7d32}.sync.busy{background:#e65100}.sync.pend{background:#fdd835;color:#1b2630}.sync.off{background:#5f6b73}.sync.bad{background:#b71c1c}
+.sync.busy svg{animation:spin 1.2s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.sync.busy svg{animation:none}}
