@@ -168,12 +168,12 @@ document.addEventListener('visibilitychange', () => { if (document.visibilitySta
 
 /* ---------- UI shell ---------- */
 // URLs: #/people, #/person/<id>, #/monthly/<yyyy-mm>, #/settings, #/log
-let tab = 'home', pid = '', ym = '', q = '';
-const TABS = [['home', '👥', 'home'], ['month', '📊', 'month'], ['set', '⚙️', 'settings']];
+let tab = 'month', pid = '', ym = '', q = '';
+const TABS = [['month', '📊', 'month'], ['home', '👥', 'home'], ['set', '⚙️', 'settings']];
 const hashFor = () => '#/' + (tab === 'person' ? 'person/' + pid : tab === 'month' ? 'monthly/' + ym : { home: 'people', set: 'settings', log: 'log' }[tab]);
 function readHash() {
   const [a, b] = location.hash.replace(/^#\/?/, '').split('/');
-  tab = { person: 'person', monthly: 'month', settings: 'set', log: 'log' }[a] || 'home';
+  tab = { people: 'home', person: 'person', monthly: 'month', settings: 'set', log: 'log' }[a] || 'month';
   if (tab === 'person') pid = b || '';
   if (tab === 'month' && /^\d{4}-\d\d$/.test(b || '')) ym = b;
 }
