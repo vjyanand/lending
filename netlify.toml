@@ -1,5 +1,6 @@
 [build]
   publish = "public"
+  command = "node scripts/version.mjs"
 
 [build.environment]
   NODE_VERSION = "22" # @netlify/blobs needs Node 22.12 or newer

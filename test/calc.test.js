@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert');
-const { addMonths, loanState } = require('../public/calc.js');
+const { addMonths, loanState, dueSummary } = require('../public/calc.js');
 
 const loan = { date: '2026-01-10', amount: 100000, itype: 'pct', rate: 2 };
 
@@ -38,4 +38,13 @@ test('clearing on a due date does not charge the next month', () => {
 test('fixed interest, advance payment, and old loans already paid up', () => {
   const s = loanState({ ...loan, itype: 'fix', rate: 1500, paidUpto: '2026-03-10' }, [{ date: '2026-04-10', int: 4000, prin: 0 }], '2026-04-10');
   assert.equal(s.charged, 1500); assert.equal(s.due, -2500);
+});
+test('next charge uses the balance at the start of the running month', () => {
+  const s = loanState(loan, [{ date: '2026-02-20', int: 0, prin: 50000 }], '2026-02-25');
+  assert.equal(s.nextDue, '2026-03-10'); assert.equal(s.nextAmt, 2000); assert.equal(s.monthly, 1000);
+});
+test('reminder summary counts loans with pending interest', () => {
+  const records = [{ k: 'P:a', d: {} }, { k: 'N:1', d: { ...loan, pid: 'a' } }, { k: 'N:2', d: { ...loan, date: '2026-01-05', pid: 'a' } },
+    { k: 'N:3', d: { ...loan, pid: 'deleted' } }, { k: 'T:x', d: { lid: '2', date: '2026-02-05', int: 2000, prin: 0 } }];
+  assert.deepEqual(dueSummary(records, '2026-02-10'), { pending: 1, today: 1 });
 });

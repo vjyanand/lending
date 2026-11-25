@@ -45,11 +45,30 @@
       c.open = round(c.amt - used);
       if (c.open > 0) { monthsDue++; since = since || c.date; }
     }
-    let nextDue = '';
-    if (balance > 0) for (let n = 1; n <= 1200 && !nextDue; n++) { const d = addMonths(loan.date, n); if (d > today) nextDue = d; }
-    return { charges, balance, charged, received, due, monthsDue, since, nextDue, monthly: monthInterest(loan, balance), closed: balance <= 0 && due <= 0 };
+    // the next charge uses the balance at the start of the running month, not today's balance
+    let nextDue = '', nextAmt = 0;
+    if (balance > 0) for (let n = 1; n <= 1200 && !nextDue; n++) {
+      const d = addMonths(loan.date, n); if (d <= today) continue;
+      nextDue = d;
+      const from = addMonths(loan.date, n - 1);
+      if (!loan.paidUpto || d > loan.paidUpto) nextAmt = monthInterest(loan, round(loan.amount - principalPaid(x => x <= from)));
+    }
+    return { charges, balance, charged, received, due, monthsDue, since, nextDue, nextAmt, monthly: monthInterest(loan, balance), closed: balance <= 0 && due <= 0 };
   }
 
-  const api = { addMonths, monthInterest, loanState, round };
+  // from raw sync records: how many loans owe interest, and how many got a new charge today
+  function dueSummary(records, today) {
+    const live = p => records.filter(r => !r.del && r.k.startsWith(p));
+    const people = new Set(live('P:').map(r => r.k.slice(2))), pays = live('T:').map(r => r.d);
+    let pending = 0, dueToday = 0;
+    for (const r of live('N:')) {
+      if (!people.has(r.d.pid)) continue;
+      const s = loanState(r.d, pays.filter(p => p.lid === r.k.slice(2)), today);
+      if (s.due > 0) { pending++; if (s.charges.some(c => c.date === today)) dueToday++; }
+    }
+    return { pending, today: dueToday };
+  }
+
+  const api = { addMonths, monthInterest, loanState, dueSummary, round };
   if (typeof module !== 'undefined') module.exports = api; else Object.assign(root, api);
 })(this);

@@ -1,4 +1,4 @@
-const CACHE = 'lending-v4'; // bump when the app files change
+const CACHE = 'lending-v6'; // bump when the app files change
 const SHELL = ['./', 'index.html', 'calc.js', 'app.js', 'style.css', 'manifest.webmanifest', 'icon.svg'];
 
 self.addEventListener('install', e => {
@@ -22,4 +22,16 @@ self.addEventListener('fetch', e => {
       return (await c.match(req, { ignoreSearch: true })) || Response.error();
     }
   })());
+});
+
+self.addEventListener('push', e => {
+  let d = {}; try { d = e.data.json(); } catch {}
+  e.waitUntil(self.registration.showNotification(d.title || 'Lending Book', { body: d.body || '', tag: 'reminder', data: { url: d.url || './' } }));
+});
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  e.waitUntil(clients.matchAll({ type: 'window', includeUncontrolled: true }).then(cs => {
+    for (const c of cs) if ('focus' in c) return c.focus();
+    return clients.openWindow(e.notification.data.url);
+  }));
 });
