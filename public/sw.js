@@ -1,4 +1,4 @@
-const CACHE = 'lending-v9'; // bump when the app files change
+const CACHE = 'lending-v11'; // bump when the app files change
 const SHELL = ['./', 'index.html', 'sync-core.js', 'calc.js', 'app.js', 'style.css', 'manifest.webmanifest', 'icon.svg'];
 
 self.addEventListener('install', e => {

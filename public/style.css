@@ -129,3 +129,8 @@ ol.help a{color:var(--g);font-weight:600;word-break:break-all}
 .sync.busy svg{animation:spin 1.2s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.sync.busy svg{animation:none}}
+/* last sync and data version in the header; a long title gives way first */
+header{gap:8px}
+h1{min-width:0;line-height:1.25;overflow-wrap:anywhere}
+.hr{flex:none;gap:7px}
+.syncinfo{display:flex;flex-direction:column;align-items:flex-end;font-size:11px;line-height:1.35;white-space:nowrap;font-variant-numeric:tabular-nums}

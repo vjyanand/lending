@@ -203,7 +203,15 @@ const SYNC_ICON = {
   off: CLOUD + '<path d="M3.5 3.5l17 17"/>',
   bad: CLOUD + '<path d="M12 10.5v3M12 15.8h.01"/>',
 };
+// last successful sync and the data version, in front of the icon (always short, in either language)
+const infoTime = new Intl.DateTimeFormat('en-IN', { timeZone: TZ, hour: 'numeric', minute: '2-digit', hour12: true });
+function updateSyncInfo() {
+  const el = $('#syncinfo'); if (!el) return;
+  el.innerHTML = meta.lastSync ? `<span>⟳ ${dmy(istDate.format(new Date(meta.lastSync)))}, ${esc(infoTime.format(new Date(meta.lastSync)))}</span><span>DB v${esc(meta.since || '—')}</span>` : '';
+  el.title = `${t('lastSync')} · ${t('dataVer')}`;
+}
 function updateSyncBtn() {
+  updateSyncInfo();
   const b = $('#syncbtn'), p = pendingCount();
   const state = !navigator.onLine ? 'off' : syncing && busy ? 'busy' : syncErr ? 'bad' : p ? 'pend' : 'ok';
   const label = { off: t('offline'), busy: t('syncNow'), bad: t('syncErrShort'), pend: `${p} ${t('pending')}`, ok: t('synced') }[state];
@@ -240,7 +248,7 @@ addEventListener('popstate', () => { readHash(); render(); });
 function toast(m, ms) { const e = $('#toast'); e.textContent = m; e.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => e.classList.remove('show'), ms || 1800); }
 function render(soft) {
   document.documentElement.lang = lang;
-  const rb = $('#robadge'); rb.hidden = !ro(); rb.textContent = '👁 ' + t('viewOnly');
+  const rb = $('#robadge'); rb.hidden = !ro(); rb.textContent = '👁'; rb.title = t('viewOnly'); rb.setAttribute('aria-label', t('viewOnly'));
   $('#title').textContent = t('app'); document.title = t('app');
   const on = k => tab === k || (k === 'home' && tab === 'person') || (k === 'set' && (tab === 'log' || tab === 'help'));
   $('#nav').innerHTML = TABS.map(([k, ic, l]) => `<button data-act="tab" data-v="${k}" class="${on(k) ? 'on' : ''}"><span>${ic}</span>${esc(t(l))}</button>`).join('');
@@ -635,7 +643,12 @@ document.addEventListener('click', e => {
   else if (act === 'remindtest') remindTest();
   else if (act === 'logall') { logDate = ''; render(); }
   else if (act === 'sync') sync(true);
-  else if (act === 'syncbtn') { if (syncErr) go('set'); else sync(true); }
+  else if (act === 'syncbtn') {
+    if (syncErr) { // take the person straight to the sync form and highlight it
+      go('set');
+      const c = $('#synccard'); if (c) { c.scrollIntoView({ block: 'center' }); c.classList.add('flash'); setTimeout(() => c.classList.remove('flash'), 1600); }
+    } else sync(true);
+  }
   else if (act === 'lang') { saveMeta('lang', v); lang = v || detectLang(); render(); if (remindCfg().on) pushSubscribe().catch(() => {}); }
 });
 // open the calendar from anywhere on a date box, and keep the dd/mm/yy label in step
