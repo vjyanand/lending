@@ -8,7 +8,8 @@ Money lent, monthly interest and repayments. Offline-first phone web app (Englis
 
 ## Put it online (Netlify)
 Deploy this folder, and set the environment variable `SYNC_KEY` to a long secret (sync refuses to work without it).
-Optional: `VIEW_KEY` for a read-only key. Enter the key in the app under Settings.
+Optional: `VIEW_KEY` for read-only sync: a phone using it sees everything but cannot change anything (enforced by the server).
+Enter either key in the app under Settings. Interest reminders need the edit key.
 Interest reminders (push notifications) work only on the Netlify site.
 
 ## How interest is calculated

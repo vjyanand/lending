@@ -16,7 +16,7 @@ const I18N = {
     charged: 'Interest charged', gotInt: 'Interest received', gotPrin: 'Principal received', newLent: 'New money lent', pendingList: 'Interest pending now', payments: 'Payments', none: 'Nothing here', export: 'Download CSV',
     language: 'Language', auto: 'Auto (follow browser language)', yourName: 'Your name', yourNameHint: 'Saved with every change you make.', auditLog: 'Audit log', noLog: 'No log entries', allDates: 'All dates', dataVer: 'Data version', version: 'App version', updatedBy: 'Updated by', lastBy: 'by', range: 'Date range', oneMonth: 'Month', from: 'From', to: 'To', allTime: 'All time', byPerson: 'Received by person', soon: 'Due in the next 7 days', share: 'Share statement', stmtAsOf: 'Statement as of {d}',
     remindTitle: 'Interest reminders', remindHint: 'Notifications on this phone, sent only when interest is pending.', remindT1: 'First reminder', remindT2: 'Second reminder', turnOn: 'Turn on', turnOff: 'Turn off', sendTest: 'Send test', pushNo: 'Notifications are not supported here. On iPhone, add the app to the Home Screen first.', pushDenied: 'Notifications are blocked in the browser settings.', pushUnavail: 'Reminders need the online server and the sync key.', remindSet: 'Reminders set', testSent: 'Test sent', changeLog: 'Change log', built: 'Built', localChanges: 'local changes',
-    server: 'Server address (blank = this site)', key: 'Sync key (if set on server)', syncNow: 'Sync now', online: 'Online', offline: 'Offline', pending: 'pending', synced: 'Synced', syncFail: 'Sync failed, will retry', syncErrShort: 'Sync failed', lastSync: 'Last sync', never: 'never', viewOnly: 'View only', saved: 'Saved',
+    server: 'Server address (blank = this site)', key: 'Sync key (if set on server)', syncNow: 'Sync now', online: 'Online', offline: 'Offline', pending: 'pending', synced: 'Synced', syncFail: 'Sync failed, will retry', syncErrShort: 'Sync failed', lastSync: 'Last sync', never: 'never', viewOnly: 'View only', viewOnlyHint: 'You can see everything, but this phone cannot change anything.', saved: 'Saved',
     log_person_add: 'Person added: {who}', log_person_edit: 'Person edited: {who}', log_person_del: 'Person deleted: {who}',
     log_loan_add: '{who}: loan added {amt} ({date})', log_loan_edit: '{who}: loan edited {amt} ({date})', log_loan_del: '{who}: loan deleted {amt} ({date})',
     log_pay_add: '{who}: received interest {int}, principal {prin} ({date})', log_pay_edit: '{who}: payment edited, interest {int}, principal {prin} ({date})', log_pay_del: '{who}: payment deleted, interest {int}, principal {prin} ({date})',
@@ -36,7 +36,7 @@ const I18N = {
     charged: 'கணக்கான வட்டி', gotInt: 'பெற்ற வட்டி', gotPrin: 'பெற்ற அசல்', newLent: 'புதிதாகக் கொடுத்தது', pendingList: 'தற்போது நிலுவை வட்டி', payments: 'வரவுகள்', none: 'எதுவும் இல்லை', export: 'CSV பதிவிறக்கு',
     language: 'மொழி', auto: 'தானியங்கி (உலாவி மொழி)', yourName: 'உங்கள் பெயர்', yourNameHint: 'நீங்கள் செய்யும் ஒவ்வொரு மாற்றத்துடனும் சேமிக்கப்படும்.', auditLog: 'தணிக்கை பதிவு', noLog: 'பதிவுகள் இல்லை', allDates: 'அனைத்து நாட்கள்', dataVer: 'தரவு பதிப்பு', version: 'செயலி பதிப்பு', updatedBy: 'புதுப்பித்தவர்', lastBy: 'செய்தவர்', range: 'காலம்', oneMonth: 'மாதம்', from: 'முதல்', to: 'வரை', allTime: 'அனைத்துக் காலம்', byPerson: 'நபர் வாரியாக வரவு', soon: 'அடுத்த 7 நாட்களில் வரவேண்டியது', share: 'கணக்கைப் பகிர்', stmtAsOf: '{d} நிலவரக் கணக்கு',
     remindTitle: 'வட்டி நினைவூட்டல்கள்', remindHint: 'வட்டி நிலுவை இருக்கும்போது மட்டும் இந்த போனுக்கு அறிவிப்பு.', remindT1: 'முதல் நினைவூட்டல்', remindT2: 'இரண்டாம் நினைவூட்டல்', turnOn: 'இயக்கு', turnOff: 'நிறுத்து', sendTest: 'சோதனை அனுப்பு', pushNo: 'இங்கு அறிவிப்புகள் ஆதரிக்கப்படவில்லை. ஐபோனில் முதலில் செயலியை Home Screen-இல் சேர்க்கவும்.', pushDenied: 'உலாவி அமைப்புகளில் அறிவிப்புகள் தடுக்கப்பட்டுள்ளன.', pushUnavail: 'நினைவூட்டலுக்கு இணைய சர்வரும் ஒத்திசைவு விசையும் தேவை.', remindSet: 'நினைவூட்டல் அமைக்கப்பட்டது', testSent: 'சோதனை அனுப்பப்பட்டது', changeLog: 'மாற்றங்களின் பதிவு', built: 'உருவாக்கியது', localChanges: 'உள்ளூர் மாற்றங்கள்',
-    server: 'சர்வர் முகவரி (காலி = இதே தளம்)', key: 'ஒத்திசைவு விசை (சர்வரில் இருந்தால்)', syncNow: 'இப்போது ஒத்திசை', online: 'இணைப்பில்', offline: 'இணைப்பு இல்லை', pending: 'நிலுவை', synced: 'ஒத்திசைந்தது', syncFail: 'ஒத்திசைவு தோல்வி, மீண்டும் முயற்சிக்கும்', syncErrShort: 'ஒத்திசைவு தோல்வி', lastSync: 'கடைசி ஒத்திசைவு', never: 'இல்லை', viewOnly: 'பார்வை மட்டும்', saved: 'சேமிக்கப்பட்டது',
+    server: 'சர்வர் முகவரி (காலி = இதே தளம்)', key: 'ஒத்திசைவு விசை (சர்வரில் இருந்தால்)', syncNow: 'இப்போது ஒத்திசை', online: 'இணைப்பில்', offline: 'இணைப்பு இல்லை', pending: 'நிலுவை', synced: 'ஒத்திசைந்தது', syncFail: 'ஒத்திசைவு தோல்வி, மீண்டும் முயற்சிக்கும்', syncErrShort: 'ஒத்திசைவு தோல்வி', lastSync: 'கடைசி ஒத்திசைவு', never: 'இல்லை', viewOnly: 'பார்வை மட்டும்', viewOnlyHint: 'நீங்கள் அனைத்தையும் பார்க்கலாம், ஆனால் இந்த போனில் மாற்றம் செய்ய முடியாது.', saved: 'சேமிக்கப்பட்டது',
     log_person_add: 'நபர் சேர்க்கப்பட்டார்: {who}', log_person_edit: 'நபர் திருத்தம்: {who}', log_person_del: 'நபர் நீக்கம்: {who}',
     log_loan_add: '{who}: கடன் சேர்ப்பு {amt} ({date})', log_loan_edit: '{who}: கடன் திருத்தம் {amt} ({date})', log_loan_del: '{who}: கடன் நீக்கம் {amt} ({date})',
     log_pay_add: '{who}: வரவு வட்டி {int}, அசல் {prin} ({date})', log_pay_edit: '{who}: வரவு திருத்தம், வட்டி {int}, அசல் {prin} ({date})', log_pay_del: '{who}: வரவு நீக்கம், வட்டி {int}, அசல் {prin} ({date})',
@@ -126,7 +126,7 @@ function book() {
 
 /* ---------- sync ---------- */
 let syncing = false, syncTimer, syncErr = false, syncMsg = '';
-const pendingCount = () => [...recs.values()].filter(r => r.dirty).length;
+const pendingCount = () => (ro() ? 0 : [...recs.values()].filter(r => r.dirty).length);
 function scheduleSync() { updateSyncBtn(); clearTimeout(syncTimer); syncTimer = setTimeout(sync, 1500); }
 async function sync(manual) {
   if (syncing) return;
@@ -148,7 +148,8 @@ async function sync(manual) {
     const others = new Set(), first = !meta.since; // names of other people whose changes just arrived
     for (const r of out.records) {
       const cur = recs.get(r.k);
-      if (!cur || !cur.dirty) { if (!first && r.b && r.b !== meta.user) others.add(r.b); const n = { k: r.k, d: r.d, u: r.u, del: r.del, b: r.b, dirty: 0 }; recs.set(r.k, n); idbPut('rec', n); }
+      // a read-only phone can't send anything, so the server's copy always wins there
+      if (!cur || !cur.dirty || out.mode === 'view') { if (!first && r.b && r.b !== meta.user) others.add(r.b); const n = { k: r.k, d: r.d, u: r.u, del: r.del, b: r.b, dirty: 0 }; recs.set(r.k, n); idbPut('rec', n); }
     }
     const mode = out.mode === 'view' ? 'view' : 'edit', modeChanged = mode !== meta.mode; saveMeta('mode', mode);
     syncMsg = ''; saveMeta('since', out.seq); saveMeta('lastSync', Date.now());
@@ -551,6 +552,7 @@ const helpView = () => `<div class="row" style="margin-bottom:10px"><button clas
 /* ---------- settings ---------- */
 function setView() {
   return `<button class="btn sec full" style="margin-bottom:10px" data-act="tab" data-v="help">❓ Help / உதவி</button>
+    ${ro() ? `<div class="card"><b>👁 ${esc(t('viewOnly'))}</b><p class="mu" style="margin-bottom:0">${esc(t('viewOnlyHint'))}</p></div>` : ''}
     <div class="card"><label style="margin-top:0">${esc(t('yourName'))}</label><input id="uname" value="${esc(meta.user)}"><p class="mu" style="margin-bottom:0">${esc(t('yourNameHint'))}</p></div>
     ${remindCard()}
     <button class="btn sec full" style="margin-bottom:10px" data-act="tab" data-v="log">🕘 ${esc(t('auditLog'))}</button>
