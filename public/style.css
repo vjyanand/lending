@@ -110,6 +110,5 @@ select,textarea{font:inherit;padding:11px;border:1px solid var(--bd);border-radi
 .tag{display:inline-block;border-radius:99px;padding:2px 9px;font-size:12px;font-weight:700;background:var(--gl);color:var(--g)}
 .tag.bad{background:#fde8e8;color:var(--re)}
 .err{color:var(--re);font-size:14px;min-height:1em;margin:8px 0 0}
-a.tel{color:var(--g);font-weight:600;text-decoration:none}
 [data-act=person]{cursor:pointer}
 .card.kv{padding:12px}

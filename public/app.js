@@ -3,12 +3,12 @@
 const I18N = {
   en: {
     app: 'Lending Book', home: 'People', month: 'Monthly', settings: 'Settings', back: 'Back', save: 'Save', cancel: 'Cancel', del: 'Delete', edit: 'Edit',
-    addPerson: 'Add person', name: 'Name', phone: 'Phone', note: 'Note', search: 'Search…', noPeople: 'No one yet. Tap + to add a person and the money you lent.',
+    addPerson: 'Add person', name: 'Name', note: 'Note', search: 'Search…', noPeople: 'No one yet. Tap + to add a person and the money you lent.',
     lent: 'Principal owed', intDue: 'Interest due', perMonth: 'Interest per month', gotMonth: 'Received this month', total: 'Total to collect', advance: 'Interest paid in advance',
     addLoan: 'Add loan', editLoan: 'Edit loan', loan: 'Loan', amount: 'Amount lent', date: 'Date given', itype: 'Interest type', pct: '% per month', fix: 'Fixed ₹ per month', rate: 'Rate', fixAmt: 'Interest each month (₹)',
     paidUpto: 'Old loan: interest already settled up to (optional)', paidUptoHint: 'Months ending on or before this date are not counted as due. For an old loan, also enter the amount still owed or record the old principal payments.',
     rateHint: 'Changing the amount or rate recalculates every month of this loan.',
-    receive: 'Receive payment', intPaid: 'Interest received', prinPaid: 'Principal received', payDate: 'Date received', editPay: 'Edit payment',
+    receive: 'Receive payment', receiveShort: 'Receive', intPaid: 'Interest received', prinPaid: 'Principal received', payDate: 'Date received', editPay: 'Edit payment',
     balance: 'Balance', nextDue: 'Next interest date', monthsDue: '{n} month(s) pending since {d}', upToDate: 'Up to date', closed: 'Closed', statement: 'Statement', charge: 'Interest charged', given: 'Loan given', payment: 'Payment',
     closing: 'This clears the principal. Interest due including this month: {amt}', after: 'After this: principal {p}, interest due {i}',
     errName: 'Enter a name', errAmount: 'Enter an amount more than 0', errRate: 'Enter the interest (0 or more)', errPay: 'Enter interest or principal received', errOver: 'Principal received is more than the balance ({amt})', errEarly: 'Date is before the loan was given', errFuture: 'Future dates are not allowed', errPaid: 'A payment is dated before this loan date',
@@ -22,12 +22,12 @@ const I18N = {
   },
   ta: {
     app: 'கடன் கணக்கு', home: 'நபர்கள்', month: 'மாதம்', settings: 'அமைப்புகள்', back: 'பின்', save: 'சேமி', cancel: 'ரத்து', del: 'நீக்கு', edit: 'திருத்து',
-    addPerson: 'நபர் சேர்', name: 'பெயர்', phone: 'தொலைபேசி', note: 'குறிப்பு', search: 'தேடு…', noPeople: 'இன்னும் யாரும் இல்லை. + அழுத்தி நபரையும் கொடுத்த கடனையும் சேர்க்கவும்.',
+    addPerson: 'நபர் சேர்', name: 'பெயர்', note: 'குறிப்பு', search: 'தேடு…', noPeople: 'இன்னும் யாரும் இல்லை. + அழுத்தி நபரையும் கொடுத்த கடனையும் சேர்க்கவும்.',
     lent: 'நிலுவை அசல்', intDue: 'நிலுவை வட்டி', perMonth: 'மாத வட்டி', gotMonth: 'இம்மாதம் வரவு', total: 'வசூலிக்க வேண்டியது', advance: 'முன்கூட்டிய வட்டி',
     addLoan: 'கடன் சேர்', editLoan: 'கடன் திருத்து', loan: 'கடன்', amount: 'கொடுத்த தொகை', date: 'கொடுத்த தேதி', itype: 'வட்டி வகை', pct: 'மாதம் %', fix: 'மாதம் நிலையான ₹', rate: 'வட்டி விகிதம்', fixAmt: 'மாத வட்டி (₹)',
     paidUpto: 'பழைய கடன்: எந்தத் தேதி வரை வட்டி தீர்ந்தது (விருப்பம்)', paidUptoHint: 'இந்தத் தேதி வரை முடியும் மாதங்கள் நிலுவையாகக் கணக்கிடப்படாது. பழைய கடனுக்கு, இன்னும் உள்ள தொகையை இடவும் அல்லது பழைய அசல் வரவுகளைப் பதியவும்.',
     rateHint: 'தொகை அல்லது வட்டியை மாற்றினால் இந்தக் கடனின் எல்லா மாதங்களும் மீண்டும் கணக்கிடப்படும்.',
-    receive: 'பணம் பெறு', intPaid: 'பெற்ற வட்டி', prinPaid: 'பெற்ற அசல்', payDate: 'பெற்ற தேதி', editPay: 'வரவைத் திருத்து',
+    receive: 'பணம் பெறு', receiveShort: 'பெறு', intPaid: 'பெற்ற வட்டி', prinPaid: 'பெற்ற அசல்', payDate: 'பெற்ற தேதி', editPay: 'வரவைத் திருத்து',
     balance: 'மீதி', nextDue: 'அடுத்த வட்டி தேதி', monthsDue: '{d} முதல் {n} மாதம் நிலுவை', upToDate: 'நிலுவை இல்லை', closed: 'முடிந்தது', statement: 'கணக்கு விவரம்', charge: 'வட்டி கணக்கு', given: 'கடன் கொடுத்தது', payment: 'வரவு',
     closing: 'இதனால் அசல் தீரும். இம்மாதம் உட்பட நிலுவை வட்டி: {amt}', after: 'இதன் பிறகு: அசல் {p}, நிலுவை வட்டி {i}',
     errName: 'பெயரை இடவும்', errAmount: '0-க்கு மேல் தொகை இடவும்', errRate: 'வட்டியை இடவும் (0 அல்லது மேல்)', errPay: 'பெற்ற வட்டி அல்லது அசலை இடவும்', errOver: 'பெற்ற அசல் மீதியை விட அதிகம் ({amt})', errEarly: 'தேதி கடன் கொடுத்த தேதிக்கு முந்தையது', errFuture: 'எதிர்கால தேதி அனுமதி இல்லை', errPaid: 'இந்தக் கடன் தேதிக்கு முன் ஒரு வரவு உள்ளது',
@@ -233,7 +233,7 @@ function personView() {
   if (!p) return back + `<div class="empty">${esc(t('none'))}</div>`;
   const opened = new Set([...document.querySelectorAll('details[data-loan][open]')].map(d => d.dataset.loan));
   return back + `<div class="card"><span class="name">${esc(p.name)}</span>
-      ${p.phone ? `<a class="tel" href="tel:${esc(String(p.phone).replace(/[^\d+]/g, ''))}">📞 ${esc(p.phone)}</a>` : ''}${p.note ? `<div class="mu">${esc(p.note)}</div>` : ''}
+      ${p.note ? `<div class="mu">${esc(p.note)}</div>` : ''}
       ${kv('lent', money(p.balance))}${kv('intDue', money(p.due), p.due ? 'amt-ex' : '')}${p.advance ? kv('advance', money(p.advance), 'amt-in') : ''}${kv('perMonth', money(p.monthly))}${kv('total', money(p.balance + p.due))}</div>` +
     p.loans.map(l => {
       const s = l.st;
@@ -287,11 +287,11 @@ function readLoan(v) {
 }
 function personDialog(id) {
   const p = id ? get('P:', id) : {};
-  openForm(t(id ? 'edit' : 'addPerson'), field('name', 'name', 'autocomplete="off"', p.name || '') + field('phone', 'phone', 'type="tel"', p.phone || '') + field('note', 'note', '', p.note || '') + (id ? '' : loanFields({})), v => {
+  openForm(t(id ? 'edit' : 'addPerson'), field('name', 'name', 'autocomplete="off"', p.name || '') + field('note', 'note', '', p.note || '') + (id ? '' : loanFields({})), v => {
     const name = v.name.trim(); if (!name) return t('errName');
     const loan = id ? null : readLoan(v); if (typeof loan === 'string') return loan;
     const nid = id || uid();
-    put('P:' + nid, { name, phone: v.phone.trim(), note: v.note.trim() });
+    put('P:' + nid, { name, note: v.note.trim() });
     audit(id ? 'person_edit' : 'person_add', { who: name });
     if (loan) { put('N:' + uid(), { pid: nid, ...loan }); audit('loan_add', { who: name, amt: loan.amount, date: loan.date }); pid = nid; tab = 'person'; history.pushState(null, '', hashFor()); }
   });
@@ -361,6 +361,13 @@ function monthData(m) {
   const inMonth = pays.filter(p => p.date.startsWith(m)).sort((a, b) => b.date.localeCompare(a.date));
   return { charged, pays: inMonth, int: sum(inMonth, p => p.int), prin: sum(inMonth, p => p.prin), lent: sum(loans.filter(l => l.date.startsWith(m)), l => l.amount) };
 }
+// one row per loan that owes interest; the loan is named only when the person has more than one waiting
+function pendingRows(p) {
+  const owing = p.loans.filter(l => l.st.due > 0);
+  return owing.map(l => `<div class="row lrow" data-act="person" data-id="${esc(p.id)}">
+    <div class="grow"><span class="name">${esc(p.name)}</span><span class="mu">${owing.length > 1 ? `${esc(t('loan'))} ${money(l.amount)} · ${dmy(l.date)}` : dmy(l.st.since)}</span></div>
+    <b class="amt-ex">${money(l.st.due)}</b>${ro() ? '' : `<button class="btn sm" data-act="pay" data-id="${esc(l.id)}">₹ ${esc(t('receiveShort'))}</button>`}</div>`).join('');
+}
 function monthView() {
   const d = monthData(ym), cur = today().slice(0, 7);
   const title = new Date(ym + '-01T00:00:00').toLocaleDateString(lang === 'ta' ? 'ta-IN' : 'en-IN', { month: 'long', year: 'numeric' });
@@ -369,13 +376,13 @@ function monthView() {
   return `<div class="date"><button class="btn sec" data-act="shift" data-v="-1">‹</button><div class="grow card" style="margin:0;text-align:center;font-weight:600">${esc(title)}</div><button class="btn sec" data-act="shift" data-v="1" ${ym >= cur ? 'disabled' : ''}>›</button></div>
     <div class="stats two2">${stat(d.charged, 'charged')}${stat(d.int, 'gotInt')}${stat(d.prin, 'gotPrin')}${stat(d.lent, 'newLent')}</div>
     <div class="secthead">${esc(t('payments'))}</div><div class="card">${d.pays.length ? `<table><thead><tr><th>${esc(t('name'))}</th><th>${esc(t('intPaid'))}</th><th>${esc(t('prinPaid'))}</th></tr></thead><tbody>${d.pays.map(p => `<tr data-act="person" data-id="${esc(loanById(p.lid).pid)}"><td>${esc(personName(loanById(p.lid).pid))}<div class="mu">${dmy(p.date)}</div></td><td>${money(p.int)}</td><td>${money(p.prin)}</td></tr>`).join('')}</tbody></table>` : `<div class="empty">${esc(t('none'))}</div>`}</div>
-    <div class="secthead">${esc(t('pendingList'))}</div><div class="card">${pend.length ? pend.map(p => `<div class="row sp lrow" data-act="person" data-id="${esc(p.id)}"><span class="name">${esc(p.name)}</span><span class="mu">${dmy(p.since)}</span><b class="amt-ex">${money(p.due)}</b></div>`).join('') : `<div class="empty">${esc(t('upToDate'))}</div>`}</div>
+    <div class="secthead">${esc(t('pendingList'))}</div><div class="card">${pend.length ? pend.map(pendingRows).join('') : `<div class="empty">${esc(t('upToDate'))}</div>`}</div>
     <button class="btn sec full" data-act="csv">⬇ ${esc(t('export'))}</button>`;
 }
 function exportCSV() {
   const b = book(), loans = new Map(all('N:').map(l => [l.id, l]));
-  const rows = [[t('name'), t('phone'), t('date'), t('amount'), t('itype'), t('rate'), t('balance'), t('intDue')],
-    ...b.flatMap(p => p.loans.map(l => [p.name, p.phone, dmy(l.date), l.amount, t(l.itype), l.rate, l.st.balance, l.st.due])),
+  const rows = [[t('name'), t('date'), t('amount'), t('itype'), t('rate'), t('balance'), t('intDue')],
+    ...b.flatMap(p => p.loans.map(l => [p.name, dmy(l.date), l.amount, t(l.itype), l.rate, l.st.balance, l.st.due])),
     [], [t('payDate'), t('name'), t('intPaid'), t('prinPaid'), t('note')],
     ...all('T:').sort((a, b) => a.date.localeCompare(b.date)).map(p => [dmy(p.date), personName((loans.get(p.lid) || {}).pid), p.int, p.prin, p.note])];
   // text starting with = + - @ would run as a formula in a spreadsheet
