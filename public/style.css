@@ -1,0 +1,115 @@
+/* ===== Base ===== */
+:root{--g:#1f5f8b;--gl:#e2eef6;--bg:#f3f6f9;--card:#fff;--tx:#1b2630;--mu:#66757f;--bd:#d6dfe6;--am:#f9a825;--re:#c62828;--m:#1976d2;--ml:#e3f0fd;--f:#ec4899;--fl:#fde7f3}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 system-ui,-apple-system,"Noto Sans Tamil","Latha",sans-serif;padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+main{padding:12px;max-width:640px;margin:0 auto}
+main.wide{max-width:none}
+
+/* ===== Header (title, sync status) ===== */
+header{position:sticky;top:0;z-index:5;background:var(--g);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:10px 14px;padding-top:calc(10px + env(safe-area-inset-top))}
+h1{font-size:18px;margin:0}
+.hr{display:flex;gap:8px;align-items:center}
+.sync{border:0;border-radius:99px;padding:6px 12px;font-size:13px;background:rgba(255,255,255,.2);color:#fff}
+.sync.off{background:#b71c1c}.sync.pend{background:#e65100}
+#robadge[hidden]{display:none}
+
+/* ===== Bottom navigation ===== */
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;gap:2px;background:#fff;border-top:1px solid var(--bd);padding:4px 4px calc(4px + env(safe-area-inset-bottom));z-index:5}
+nav button{position:relative;flex:1;border:0;background:none;border-radius:12px;padding:7px 2px 6px;font-size:11px;color:var(--mu);display:flex;flex-direction:column;align-items:center;gap:2px}
+nav button span{font-size:20px}
+nav button.on{background:var(--gl);color:var(--g);font-weight:700}
+nav button.on::before{content:"";position:absolute;top:0;left:28%;right:28%;height:3px;border-radius:0 0 3px 3px;background:var(--g)}
+
+/* ===== Layout helpers, cards, text ===== */
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;margin-bottom:10px}
+.row{display:flex;gap:8px;align-items:center}
+.sp{justify-content:space-between}
+.grow{flex:1}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mu{color:var(--mu);font-size:13px}
+.empty{text-align:center;color:var(--mu);padding:30px 10px}
+.name{font-weight:600;font-size:17px}
+.secthead{font-weight:700;font-size:16px;margin:16px 0 6px;color:var(--g)}
+details summary{cursor:pointer;font-weight:600}
+
+/* ===== Forms and buttons ===== */
+input{font:inherit;padding:11px;border:1px solid var(--bd);border-radius:10px;width:100%;background:#fff;color:var(--tx)}
+label{display:block;font-size:13px;color:var(--mu);margin:10px 0 4px}
+.btn{border:0;border-radius:10px;padding:12px 16px;font:inherit;font-weight:600;background:var(--g);color:#fff}
+.btn.sec{background:var(--gl);color:var(--g)}
+.btn.dng{background:#fde8e8;color:var(--re)}
+.btn.sm{padding:7px 12px;font-size:14px}
+.btn.full{width:100%}
+.btn:disabled{opacity:.35}
+/* round add button: SVG plus is exactly centred; sits above the nav bar and stays inside the 640px column on wide screens */
+.fab{position:fixed;right:max(16px,calc((100vw - 640px)/2 + 16px));bottom:calc(76px + env(safe-area-inset-bottom));width:60px;height:60px;padding:0;border-radius:50%;border:0;background:var(--g);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.28);z-index:4;transition:transform .12s,box-shadow .12s}
+.fab:active{transform:scale(.92);box-shadow:0 2px 6px rgba(0,0,0,.3)}
+
+/* ===== Choice buttons (language, gender, mode, span) ===== */
+.gsel{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.gsel.three{grid-template-columns:repeat(3,1fr)}
+.gsel button{border:1.5px solid var(--bd);background:#fff;border-radius:10px;padding:11px;font:inherit}
+.gsel button.on{border-color:var(--g);background:var(--gl);font-weight:700}
+
+
+/* ===== Summary boxes, month picker, rows ===== */
+.date{display:flex;gap:6px;margin-bottom:10px}
+.date button{width:46px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+.stats div{background:var(--gl);border-radius:10px;padding:8px;text-align:center}
+.stats b{display:block;font-size:16px;color:var(--g)}
+.stats small{color:var(--mu);font-size:11px}
+.rate{background:none;border:1px dashed var(--bd);border-radius:8px;padding:2px 8px;font:inherit;font-size:13px;color:var(--mu)}
+.lrow{padding:9px 0;border-bottom:1px solid var(--bd)}.lrow .name{flex:1}
+
+/* ===== Amounts ===== */
+.amt-in{color:var(--g);font-weight:700}.amt-ex{color:var(--re);font-weight:700}
+
+/* ===== Tables and report ===== */
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:8px 4px;border-bottom:1px solid var(--bd);text-align:right;font-variant-numeric:tabular-nums}
+th:first-child,td:first-child{text-align:left}
+th{font-size:12px;color:var(--mu);font-weight:600}
+tfoot td{font-weight:700;border-top:2px solid var(--g)}
+.sum td{font-weight:700;border-top:2px solid var(--g)}
+tr[data-act]{cursor:pointer}
+.gridwrap{overflow-x:auto;background:#fff;border:1px solid var(--bd);border-radius:12px;margin-bottom:8px}
+table.grid{width:max-content;min-width:100%;font-size:13px}
+.grid th,.grid td{text-align:center;padding:7px 3px;min-width:28px}
+.grid .nm{position:sticky;left:0;background:#fff;text-align:left;min-width:110px;max-width:130px;z-index:1;box-shadow:1px 0 0 var(--bd)}
+.grid td.c{font-size:15px}
+.grid td.full{color:var(--g);font-weight:700}.grid td.am,.grid td.pm{color:#b26a00}.grid td.abs{color:var(--re)}
+.grid td:not(.c):not(.nm){white-space:nowrap;padding:7px 6px;text-align:right}
+.grid th:not(.nm):not(.dh){text-align:right}
+.grid th.dh{text-align:center}
+/* small separator row that starts each wage class */
+.grid tr.grpsep td{padding:2px 6px;font-size:10px;font-weight:600;color:var(--mu);background:var(--bg);border-bottom:0;text-align:left;letter-spacing:.3px}
+.grid tr.grpsep td.nm{background:var(--bg)}
+
+/* ===== Dialogs and toast ===== */
+dialog{border:0;border-radius:16px;padding:16px;width:min(92vw,440px)}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+dialog h2{margin:0 0 4px;font-size:18px}
+#toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#222;color:#fff;padding:9px 16px;border-radius:99px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:20}
+#toast.show{opacity:1}
+
+/* ===== Help page ===== */
+.hh{margin:14px 0 4px;font-size:15px;color:var(--g)}
+ol.help{margin:0;padding-left:20px}ol.help li{margin:6px 0}
+ol.help a{color:var(--g);font-weight:600;word-break:break-all}
+.flash{outline:3px solid var(--re);transition:outline .3s}
+
+/* ===== Lending ===== */
+select,textarea{font:inherit;padding:11px;border:1px solid var(--bd);border-radius:10px;width:100%;background:#fff;color:var(--tx)}
+.stats.two2{grid-template-columns:1fr 1fr}
+.stats b{font-size:18px}
+.stats .bad b{color:var(--re)}
+.name{display:block}
+.right{text-align:right}
+.kv{display:flex;justify-content:space-between;gap:8px;padding:3px 0}
+.tag{display:inline-block;border-radius:99px;padding:2px 9px;font-size:12px;font-weight:700;background:var(--gl);color:var(--g)}
+.tag.bad{background:#fde8e8;color:var(--re)}
+.err{color:var(--re);font-size:14px;min-height:1em;margin:8px 0 0}
+a.tel{color:var(--g);font-weight:600;text-decoration:none}
+[data-act=person]{cursor:pointer}
+.card.kv{padding:12px}

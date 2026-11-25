@@ -1,0 +1,467 @@
+'use strict';
+/* ---------- i18n ---------- */
+const I18N = {
+  en: {
+    app: 'Lending Book', home: 'People', month: 'Monthly', settings: 'Settings', back: 'Back', save: 'Save', cancel: 'Cancel', del: 'Delete', edit: 'Edit',
+    addPerson: 'Add person', name: 'Name', phone: 'Phone', note: 'Note', search: 'Search…', noPeople: 'No one yet. Tap + to add a person and the money you lent.',
+    lent: 'Principal owed', intDue: 'Interest due', perMonth: 'Interest per month', gotMonth: 'Received this month', total: 'Total to collect', advance: 'Interest paid in advance',
+    addLoan: 'Add loan', editLoan: 'Edit loan', loan: 'Loan', amount: 'Amount lent', date: 'Date given', itype: 'Interest type', pct: '% per month', fix: 'Fixed ₹ per month', rate: 'Rate', fixAmt: 'Interest each month (₹)',
+    paidUpto: 'Old loan: interest already settled up to (optional)', paidUptoHint: 'Months ending on or before this date are not counted as due. For an old loan, also enter the amount still owed or record the old principal payments.',
+    rateHint: 'Changing the amount or rate recalculates every month of this loan.',
+    receive: 'Receive payment', intPaid: 'Interest received', prinPaid: 'Principal received', payDate: 'Date received', editPay: 'Edit payment',
+    balance: 'Balance', nextDue: 'Next interest date', monthsDue: '{n} month(s) pending since {d}', upToDate: 'Up to date', closed: 'Closed', statement: 'Statement', charge: 'Interest charged', given: 'Loan given', payment: 'Payment',
+    closing: 'This clears the principal. Interest due including this month: {amt}', after: 'After this: principal {p}, interest due {i}',
+    errName: 'Enter a name', errAmount: 'Enter an amount more than 0', errRate: 'Enter the interest (0 or more)', errPay: 'Enter interest or principal received', errOver: 'Principal received is more than the balance ({amt})', errEarly: 'Date is before the loan was given', errFuture: 'Future dates are not allowed', errPaid: 'A payment is dated before this loan date',
+    confirmLoan: 'Delete this loan and all its payments?', confirmPay: 'Delete this payment?', confirmPerson: 'Delete this person and their closed loans?', cannotDel: 'Cannot delete: this person still owes money.',
+    charged: 'Interest charged', gotInt: 'Interest received', gotPrin: 'Principal received', newLent: 'New money lent', pendingList: 'Interest pending now', payments: 'Payments', none: 'Nothing here', export: 'Download CSV',
+    language: 'Language', auto: 'Auto (follow browser language)', yourName: 'Your name', yourNameHint: 'Saved with every change you make.', auditLog: 'Change history', noLog: 'No entries',
+    server: 'Server address (blank = this site)', key: 'Sync key (if set on server)', syncNow: 'Sync now', online: 'Online', offline: 'Offline', pending: 'pending', synced: 'Synced', syncFail: 'Sync failed, will retry', syncErrShort: 'Sync failed', lastSync: 'Last sync', never: 'never', viewOnly: 'View only', saved: 'Saved',
+    log_person_add: 'Person added: {who}', log_person_edit: 'Person edited: {who}', log_person_del: 'Person deleted: {who}',
+    log_loan_add: '{who}: loan added {amt} ({date})', log_loan_edit: '{who}: loan edited {amt} ({date})', log_loan_del: '{who}: loan deleted {amt} ({date})',
+    log_pay_add: '{who}: received interest {int}, principal {prin} ({date})', log_pay_edit: '{who}: payment edited, interest {int}, principal {prin} ({date})', log_pay_del: '{who}: payment deleted, interest {int}, principal {prin} ({date})',
+  },
+  ta: {
+    app: 'கடன் கணக்கு', home: 'நபர்கள்', month: 'மாதம்', settings: 'அமைப்புகள்', back: 'பின்', save: 'சேமி', cancel: 'ரத்து', del: 'நீக்கு', edit: 'திருத்து',
+    addPerson: 'நபர் சேர்', name: 'பெயர்', phone: 'தொலைபேசி', note: 'குறிப்பு', search: 'தேடு…', noPeople: 'இன்னும் யாரும் இல்லை. + அழுத்தி நபரையும் கொடுத்த கடனையும் சேர்க்கவும்.',
+    lent: 'நிலுவை அசல்', intDue: 'நிலுவை வட்டி', perMonth: 'மாத வட்டி', gotMonth: 'இம்மாதம் வரவு', total: 'வசூலிக்க வேண்டியது', advance: 'முன்கூட்டிய வட்டி',
+    addLoan: 'கடன் சேர்', editLoan: 'கடன் திருத்து', loan: 'கடன்', amount: 'கொடுத்த தொகை', date: 'கொடுத்த தேதி', itype: 'வட்டி வகை', pct: 'மாதம் %', fix: 'மாதம் நிலையான ₹', rate: 'வட்டி விகிதம்', fixAmt: 'மாத வட்டி (₹)',
+    paidUpto: 'பழைய கடன்: எந்தத் தேதி வரை வட்டி தீர்ந்தது (விருப்பம்)', paidUptoHint: 'இந்தத் தேதி வரை முடியும் மாதங்கள் நிலுவையாகக் கணக்கிடப்படாது. பழைய கடனுக்கு, இன்னும் உள்ள தொகையை இடவும் அல்லது பழைய அசல் வரவுகளைப் பதியவும்.',
+    rateHint: 'தொகை அல்லது வட்டியை மாற்றினால் இந்தக் கடனின் எல்லா மாதங்களும் மீண்டும் கணக்கிடப்படும்.',
+    receive: 'பணம் பெறு', intPaid: 'பெற்ற வட்டி', prinPaid: 'பெற்ற அசல்', payDate: 'பெற்ற தேதி', editPay: 'வரவைத் திருத்து',
+    balance: 'மீதி', nextDue: 'அடுத்த வட்டி தேதி', monthsDue: '{d} முதல் {n} மாதம் நிலுவை', upToDate: 'நிலுவை இல்லை', closed: 'முடிந்தது', statement: 'கணக்கு விவரம்', charge: 'வட்டி கணக்கு', given: 'கடன் கொடுத்தது', payment: 'வரவு',
+    closing: 'இதனால் அசல் தீரும். இம்மாதம் உட்பட நிலுவை வட்டி: {amt}', after: 'இதன் பிறகு: அசல் {p}, நிலுவை வட்டி {i}',
+    errName: 'பெயரை இடவும்', errAmount: '0-க்கு மேல் தொகை இடவும்', errRate: 'வட்டியை இடவும் (0 அல்லது மேல்)', errPay: 'பெற்ற வட்டி அல்லது அசலை இடவும்', errOver: 'பெற்ற அசல் மீதியை விட அதிகம் ({amt})', errEarly: 'தேதி கடன் கொடுத்த தேதிக்கு முந்தையது', errFuture: 'எதிர்கால தேதி அனுமதி இல்லை', errPaid: 'இந்தக் கடன் தேதிக்கு முன் ஒரு வரவு உள்ளது',
+    confirmLoan: 'இந்தக் கடனையும் அதன் வரவுகளையும் நீக்கவா?', confirmPay: 'இந்த வரவை நீக்கவா?', confirmPerson: 'இவரையும் முடிந்த கடன்களையும் நீக்கவா?', cannotDel: 'நீக்க முடியாது: இவர் இன்னும் பணம் தர வேண்டும்.',
+    charged: 'கணக்கான வட்டி', gotInt: 'பெற்ற வட்டி', gotPrin: 'பெற்ற அசல்', newLent: 'புதிதாகக் கொடுத்தது', pendingList: 'தற்போது நிலுவை வட்டி', payments: 'வரவுகள்', none: 'எதுவும் இல்லை', export: 'CSV பதிவிறக்கு',
+    language: 'மொழி', auto: 'தானியங்கி (உலாவி மொழி)', yourName: 'உங்கள் பெயர்', yourNameHint: 'நீங்கள் செய்யும் ஒவ்வொரு மாற்றத்துடனும் சேமிக்கப்படும்.', auditLog: 'மாற்ற வரலாறு', noLog: 'பதிவுகள் இல்லை',
+    server: 'சர்வர் முகவரி (காலி = இதே தளம்)', key: 'ஒத்திசைவு விசை (சர்வரில் இருந்தால்)', syncNow: 'இப்போது ஒத்திசை', online: 'இணைப்பில்', offline: 'இணைப்பு இல்லை', pending: 'நிலுவை', synced: 'ஒத்திசைந்தது', syncFail: 'ஒத்திசைவு தோல்வி, மீண்டும் முயற்சிக்கும்', syncErrShort: 'ஒத்திசைவு தோல்வி', lastSync: 'கடைசி ஒத்திசைவு', never: 'இல்லை', viewOnly: 'பார்வை மட்டும்', saved: 'சேமிக்கப்பட்டது',
+    log_person_add: 'நபர் சேர்க்கப்பட்டார்: {who}', log_person_edit: 'நபர் திருத்தம்: {who}', log_person_del: 'நபர் நீக்கம்: {who}',
+    log_loan_add: '{who}: கடன் சேர்ப்பு {amt} ({date})', log_loan_edit: '{who}: கடன் திருத்தம் {amt} ({date})', log_loan_del: '{who}: கடன் நீக்கம் {amt} ({date})',
+    log_pay_add: '{who}: வரவு வட்டி {int}, அசல் {prin} ({date})', log_pay_edit: '{who}: வரவு திருத்தம், வட்டி {int}, அசல் {prin} ({date})', log_pay_del: '{who}: வரவு நீக்கம், வட்டி {int}, அசல் {prin} ({date})',
+  },
+};
+
+/* ---------- helpers ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const uid = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2, 10));
+const dmy = s => s ? `${s.slice(8, 10)}/${s.slice(5, 7)}/${s.slice(2, 4)}` : '';
+const money = n => (n < 0 ? '−' : '') + '₹' + (Math.round(Math.abs(n) * 100) / 100).toLocaleString('en-IN');
+const sum = (a, f) => round(a.reduce((n, x) => n + (+f(x) || 0), 0));
+let lang = 'en';
+const detectLang = () => ((navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'en']).map(l => String(l).toLowerCase()).find(l => l.startsWith('ta') || l.startsWith('en')) || 'en').startsWith('ta') ? 'ta' : 'en';
+const t = k => (I18N[lang] && I18N[lang][k]) || I18N.en[k] || k;
+const tf = (k, v) => t(k).replace(/\{(\w+)\}/g, (m, x) => v[x] ?? '');
+
+/* ---------- storage (IndexedDB, everything cached in memory) ---------- */
+// record: {k, d:{...}, u:updatedAt, del:0|1, dirty:0|1, b:user}
+// keys:  P:<id> person | N:<id> loan {pid} | T:<id> payment {lid} | G:… change history
+let idb; const recs = new Map(); const meta = { mode: 'edit', clockOffset: 0, user: '', lang: '', since: 0, server: '', key: '', lastSync: 0 };
+function openDB() {
+  return new Promise((res, rej) => {
+    const r = indexedDB.open('lending-db', 1);
+    r.onupgradeneeded = () => { r.result.createObjectStore('rec', { keyPath: 'k' }); r.result.createObjectStore('meta'); };
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+  });
+}
+const idbAll = st => new Promise(res => { const q = idb.transaction(st).objectStore(st).getAll(); q.onsuccess = () => res(q.result); });
+const idbGet = (st, k) => new Promise(res => { const q = idb.transaction(st).objectStore(st).get(k); q.onsuccess = () => res(q.result); });
+const idbPut = (st, v, k) => idb.transaction(st, 'readwrite').objectStore(st).put(v, k);
+async function load() {
+  idb = await openDB();
+  (await idbAll('rec')).forEach(r => recs.set(r.k, r));
+  for (const k of Object.keys(meta)) { const v = await idbGet('meta', k); if (v !== undefined) meta[k] = v; }
+  lang = I18N[meta.lang] ? meta.lang : detectLang();
+}
+const saveMeta = (k, v) => { meta[k] = v; idbPut('meta', v, k); };
+// "today" is the Indian date, corrected by the server clock once synced
+const TZ = 'Asia/Kolkata';
+const istDate = new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit' });
+const now = () => Date.now() + Math.round(meta.clockOffset || 0);
+const today = () => istDate.format(new Date(now()));
+const ro = () => meta.mode === 'view';
+function writeRec(k, d, del) {
+  const u = Math.max(now(), (recs.get(k)?.u || 0) + 1);
+  const r = { k, d, u, del, dirty: 1, b: meta.user };
+  recs.set(k, r); idbPut('rec', r); scheduleSync();
+}
+function put(k, d, del = 0) {
+  if (ro()) { toast(t('viewOnly')); throw new Error('read only'); }
+  if (!meta.user) { askName(); throw new Error('user name required'); } // every change is signed
+  writeRec(k, d, del);
+}
+const remove = k => put(k, recs.get(k).d, 1);
+const audit = (act, o) => put(`G:${now()}:${uid().slice(0, 6)}`, { act, ...o });
+
+/* ---------- data ---------- */
+const live = prefix => [...recs.values()].filter(r => !r.del && r.k.startsWith(prefix));
+const get = (p, id) => { const r = recs.get(p + id); return r && !r.del ? { id, ...r.d } : null; };
+const all = p => live(p).map(r => ({ id: r.k.slice(2), ...r.d }));
+const paysOf = lid => all('T:').filter(p => p.lid === lid).sort((a, b) => a.date.localeCompare(b.date));
+// every person with their loans and computed balances
+function book() {
+  const day = today(), pays = new Map(), loans = new Map();
+  const group = (m, k, v) => (m.get(k) || m.set(k, []).get(k)).push(v);
+  for (const p of all('T:')) group(pays, p.lid, p);
+  for (const l of all('N:')) {
+    const ps = (pays.get(l.id) || []).sort((a, b) => a.date.localeCompare(b.date));
+    group(loans, l.pid, { ...l, pays: ps, st: loanState(l, ps, day) });
+  }
+  return all('P:').map(p => {
+    const ls = (loans.get(p.id) || []).sort((a, b) => a.st.closed - b.st.closed || a.date.localeCompare(b.date));
+    return {
+      ...p, loans: ls,
+      balance: sum(ls, l => l.st.balance),
+      due: sum(ls, l => Math.max(0, l.st.due)),
+      advance: sum(ls, l => Math.max(0, -l.st.due)),
+      monthly: sum(ls, l => l.st.monthly),
+      since: ls.map(l => l.st.since).filter(Boolean).sort()[0] || '',
+    };
+  });
+}
+
+/* ---------- sync ---------- */
+let syncing = false, syncTimer, syncErr = false, syncMsg = '';
+const pendingCount = () => [...recs.values()].filter(r => r.dirty).length;
+function scheduleSync() { updateSyncBtn(); clearTimeout(syncTimer); syncTimer = setTimeout(sync, 1500); }
+async function sync(manual) {
+  if (syncing) return;
+  if (!navigator.onLine) { if (manual === true) toast(t('offline')); return; }
+  syncing = true; syncErr = false; updateSyncBtn();
+  const abort = new AbortController(), timeout = setTimeout(() => abort.abort(), 30000);
+  const url = (meta.server || '').replace(/\/$/, '') + '/api/sync';
+  try {
+    const queue = meta.mode === 'edit' ? [...recs.values()].filter(r => r.dirty) : [], sent = queue.slice(0, 500), t0 = Date.now();
+    const res = await fetch(url, {
+      method: 'POST', signal: abort.signal,
+      headers: { 'Content-Type': 'application/json', ...(meta.key ? { 'x-sync-key': meta.key } : {}) },
+      body: JSON.stringify({ since: meta.since, records: sent.map(({ k, d, u, del, b }) => ({ k, d, u, del, b })) }),
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status + (res.status === 404 ? ' (no sync server at this address)' : res.status === 401 ? ' (wrong sync key)' : res.status === 503 ? ' (server busy or SYNC_KEY not set)' : ''));
+    const out = await res.json().catch(() => { throw new Error('unexpected reply (not the sync server)'); });
+    if (out.now) saveMeta('clockOffset', out.now - Math.round((t0 + Date.now()) / 2));
+    for (const s of out.mode === 'view' ? [] : sent) { const cur = recs.get(s.k); if (cur && cur.u === s.u) { cur.dirty = 0; idbPut('rec', cur); } }
+    for (const r of out.records) {
+      const cur = recs.get(r.k);
+      if (!cur || !cur.dirty) { const n = { k: r.k, d: r.d, u: r.u, del: r.del, b: r.b, dirty: 0 }; recs.set(r.k, n); idbPut('rec', n); }
+    }
+    const mode = out.mode === 'view' ? 'view' : 'edit', modeChanged = mode !== meta.mode; saveMeta('mode', mode);
+    syncMsg = ''; saveMeta('since', out.seq); saveMeta('lastSync', Date.now());
+    if (modeChanged || out.records.length) render(true);
+    if (queue.length > sent.length) scheduleSync();
+  } catch (e) {
+    syncErr = true; syncMsg = e instanceof TypeError || e.name === 'AbortError' ? 'cannot reach server' : e.message;
+    if (manual === true) toast(t('syncFail') + ' · ' + syncMsg);
+  }
+  clearTimeout(timeout); syncing = false; updateSyncBtn(); if (tab === 'set') render(true);
+}
+function updateSyncBtn() {
+  const b = $('#syncbtn'), p = pendingCount();
+  b.className = 'sync ' + (!navigator.onLine || syncErr ? 'off' : p ? 'pend' : '');
+  b.textContent = !navigator.onLine ? '⛔ ' + t('offline') + (p ? ` · ${p}` : '')
+    : syncing ? '⟳ …' : syncErr ? '⚠ ' + t('syncErrShort') + (p ? ` · ${p}` : '') : p ? `⟳ ${p} ${t('pending')}` : '✓ ' + t('synced');
+}
+addEventListener('online', () => { updateSyncBtn(); sync(); });
+addEventListener('offline', updateSyncBtn);
+setInterval(() => { if (document.visibilityState === 'visible' ? navigator.onLine : pendingCount()) sync(); }, 15000);
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && navigator.onLine) sync(); });
+
+/* ---------- UI shell ---------- */
+// URLs: #/people, #/person/<id>, #/monthly/<yyyy-mm>, #/settings, #/log
+let tab = 'home', pid = '', ym = '', q = '';
+const TABS = [['home', '👥', 'home'], ['month', '📊', 'month'], ['set', '⚙️', 'settings']];
+const hashFor = () => '#/' + (tab === 'person' ? 'person/' + pid : tab === 'month' ? 'monthly/' + ym : { home: 'people', set: 'settings', log: 'log' }[tab]);
+function readHash() {
+  const [a, b] = location.hash.replace(/^#\/?/, '').split('/');
+  tab = { person: 'person', monthly: 'month', settings: 'set', log: 'log' }[a] || 'home';
+  if (tab === 'person') pid = b || '';
+  if (tab === 'month' && /^\d{4}-\d\d$/.test(b || '')) ym = b;
+}
+function go(to) { tab = to; history.pushState(null, '', hashFor()); render(); scrollTo(0, 0); }
+addEventListener('popstate', () => { readHash(); render(); });
+function toast(m, ms) { const e = $('#toast'); e.textContent = m; e.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => e.classList.remove('show'), ms || 1800); }
+function render(soft) {
+  document.documentElement.lang = lang;
+  const rb = $('#robadge'); rb.hidden = !ro(); rb.textContent = '👁 ' + t('viewOnly');
+  $('#title').textContent = t('app'); document.title = t('app');
+  const on = k => tab === k || (k === 'home' && tab === 'person') || (k === 'set' && tab === 'log');
+  $('#nav').innerHTML = TABS.map(([k, ic, l]) => `<button data-act="tab" data-v="${k}" class="${on(k) ? 'on' : ''}"><span>${ic}</span>${esc(t(l))}</button>`).join('');
+  updateSyncBtn();
+  // don't wipe a field someone is typing in when a sync arrives
+  if (soft && document.activeElement && document.activeElement.matches('main input')) { if (tab === 'home') drawPeople(); return; }
+  $('#view').innerHTML = { home: homeView, person: personView, month: monthView, set: setView, log: logView }[tab]();
+  if (tab === 'home') drawPeople();
+}
+const stat = (v, l, bad) => `<div class="${bad ? 'bad' : ''}"><b>${money(v)}</b><small>${esc(t(l))}</small></div>`;
+const kv = (l, v, cls = '') => `<div class="kv"><span class="mu">${esc(t(l))}</span><b class="${cls}">${v}</b></div>`;
+const dueTag = x => x.due > 0 ? `<span class="tag bad">${esc(x.since ? tf('monthsDue', { n: x.monthsDue, d: dmy(x.since) }) : t('intDue'))}</span>` : '';
+
+/* ---------- people ---------- */
+function homeView() {
+  const b = book(), m = today().slice(0, 7), got = all('T:').filter(p => p.date.startsWith(m));
+  return `<div class="stats two2">${stat(sum(b, p => p.balance), 'lent')}${stat(sum(b, p => p.due), 'intDue', true)}${stat(sum(b, p => p.monthly), 'perMonth')}${stat(sum(got, p => p.int + p.prin), 'gotMonth')}</div>
+    <div class="card kv"><span>${esc(t('total'))}</span><b>${money(sum(b, p => p.balance + p.due))}</b></div>
+    ${b.length ? `<input id="q" type="search" placeholder="${esc(t('search'))}" value="${esc(q)}" style="margin-bottom:10px">` : ''}
+    <div id="people"></div>${ro() ? '' : `<div style="height:84px"></div>${fab('addperson', 'addPerson')}`}`;
+}
+const fab = (act, label) => `<button class="fab" data-act="${act}" aria-label="${esc(t(label))}" title="${esc(t(label))}"><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg></button>`;
+function drawPeople() {
+  const el = $('#people'); if (!el) return;
+  // longest-pending interest first, then whoever still owes, then name
+  const list = book().filter(p => !q || p.name.toLowerCase().includes(q.toLowerCase()))
+    .sort((a, b) => (a.since || '9').localeCompare(b.since || '9') || (b.balance > 0) - (a.balance > 0) || a.name.localeCompare(b.name));
+  el.innerHTML = list.length ? list.map(p => {
+    const months = Math.max(0, ...p.loans.map(l => l.st.monthsDue));
+    return `<div class="card" data-act="person" data-id="${esc(p.id)}">
+      <div class="row sp"><span class="name">${esc(p.name)}</span><b>${money(p.balance)}</b></div>
+      <div class="row sp"><span class="mu">${esc(t('perMonth'))}: ${money(p.monthly)}</span>${p.due > 0 ? `<b class="amt-ex">${esc(t('intDue'))} ${money(p.due)}</b>` : `<span class="tag">${esc(t(p.loans.length && !p.balance ? 'closed' : 'upToDate'))}</span>`}</div>
+      ${p.due > 0 ? `<div style="margin-top:6px">${dueTag({ ...p, monthsDue: months })}</div>` : ''}</div>`;
+  }).join('') : `<div class="empty">${esc(t('noPeople'))}</div>`;
+}
+
+/* ---------- one person ---------- */
+function statement(l) {
+  const rows = [{ date: l.date, o: 0, label: t('given'), val: money(l.amount) },
+    ...l.st.charges.map(c => ({ date: c.date, o: 1, label: `${t('charge')} (${money(c.bal)})`, val: money(c.amt), cls: 'amt-ex' })),
+    ...l.pays.map(p => ({ date: p.date, o: 2, id: p.id, label: [t('payment'), p.note].filter(Boolean).join(' · '), val: [p.int ? `${t('intPaid')} ${money(p.int)}` : '', p.prin ? `${t('prinPaid')} ${money(p.prin)}` : ''].filter(Boolean).map(esc).join('<br>'), html: true, cls: 'amt-in' }))]
+    .sort((a, b) => b.date.localeCompare(a.date) || b.o - a.o);
+  return `<table><tbody>${rows.map(r => `<tr ${r.id && !ro() ? `data-act="editpay" data-id="${esc(r.id)}"` : ''}><td>${dmy(r.date)}</td><td style="text-align:left">${esc(r.label)}${r.id && !ro() ? ' ✎' : ''}</td><td class="${r.cls || ''}">${r.html ? r.val : esc(r.val)}</td></tr>`).join('')}</tbody></table>`;
+}
+function personView() {
+  const p = book().find(x => x.id === pid);
+  const back = `<div class="row" style="margin-bottom:10px"><button class="btn sec sm" data-act="tab" data-v="home">‹ ${esc(t('back'))}</button><span class="grow"></span>${p && !ro() ? `<button class="btn sec sm" data-act="editperson">✎ ${esc(t('edit'))}</button><button class="btn dng sm" data-act="delperson">${esc(t('del'))}</button>` : ''}</div>`;
+  if (!p) return back + `<div class="empty">${esc(t('none'))}</div>`;
+  const opened = new Set([...document.querySelectorAll('details[data-loan][open]')].map(d => d.dataset.loan));
+  return back + `<div class="card"><span class="name">${esc(p.name)}</span>
+      ${p.phone ? `<a class="tel" href="tel:${esc(String(p.phone).replace(/[^\d+]/g, ''))}">📞 ${esc(p.phone)}</a>` : ''}${p.note ? `<div class="mu">${esc(p.note)}</div>` : ''}
+      ${kv('lent', money(p.balance))}${kv('intDue', money(p.due), p.due ? 'amt-ex' : '')}${p.advance ? kv('advance', money(p.advance), 'amt-in') : ''}${kv('perMonth', money(p.monthly))}${kv('total', money(p.balance + p.due))}</div>` +
+    p.loans.map(l => {
+      const s = l.st;
+      return `<div class="card" style="${s.closed ? 'opacity:.7' : ''}">
+        <div class="row sp"><b>${esc(t('loan'))} ${money(l.amount)} · ${dmy(l.date)}</b>${ro() ? '' : `<button class="rate" data-act="editloan" data-id="${esc(l.id)}">✎</button>`}</div>
+        <div class="mu">${l.itype === 'fix' ? `${money(l.rate)} ${esc(t('fix'))}` : `${esc(l.rate)} ${esc(t('pct'))}`}</div>
+        ${kv('balance', money(s.balance))}
+        ${s.due < 0 ? kv('advance', money(-s.due), 'amt-in') : kv('intDue', money(s.due), s.due ? 'amt-ex' : '')}
+        ${s.nextDue ? kv('nextDue', `${dmy(s.nextDue)} · ${money(s.monthly)}`) : ''}
+        <div style="margin:6px 0">${s.closed ? `<span class="tag">${esc(t('closed'))}</span>` : s.due > 0 ? dueTag(s) : `<span class="tag">${esc(t('upToDate'))}</span>`}</div>
+        ${ro() || s.closed ? '' : `<button class="btn full" data-act="pay" data-id="${esc(l.id)}">₹ ${esc(t('receive'))}</button>`}
+        <details data-loan="${esc(l.id)}" ${opened.has(l.id) ? 'open' : ''} style="margin-top:10px"><summary>${esc(t('statement'))}</summary>${statement(l)}</details></div>`;
+    }).join('') + (ro() ? '' : `<button class="btn sec full" data-act="addloan">＋ ${esc(t('addLoan'))}</button>`);
+}
+
+/* ---------- forms ---------- */
+const field = (label, name, attrs = '', value = '') => `<label>${esc(t(label))}</label><input name="${name}" ${attrs} value="${esc(value)}">`;
+const num = 'type="number" inputmode="decimal" min="0" step="any"';
+// onSave returns an error key/text to keep the dialog open
+function openForm(title, body, onSave, onDelete) {
+  if (ro()) return toast(t('viewOnly'));
+  if (!meta.user) return askName();
+  const dlg = $('#dlg');
+  dlg.innerHTML = `<form id="form" novalidate><h2>${esc(title)}</h2>${body}<p class="err" id="err"></p>
+    <div class="row" style="margin-top:10px">${onDelete ? `<button type="button" class="btn dng" id="fdel">${esc(t('del'))}</button>` : ''}<span class="grow"></span>
+    <button type="button" class="btn sec" id="fcancel">${esc(t('cancel'))}</button><button class="btn">${esc(t('save'))}</button></div></form>`;
+  const form = $('#form');
+  form.onsubmit = e => {
+    e.preventDefault();
+    const err = onSave(Object.fromEntries(new FormData(form)));
+    if (err) { $('#err').textContent = err; return; }
+    dlg.close(); render(); toast(t('saved'));
+  };
+  form.addEventListener('input', () => { $('#err').textContent = ''; });
+  $('#fcancel').onclick = () => dlg.close();
+  if (onDelete) $('#fdel').onclick = () => { if (onDelete() !== false) { dlg.close(); render(); } };
+  dlg.showModal();
+  return form;
+}
+const loanFields = l => `<div class="two"><div>${field('amount', 'amount', num, l.amount ?? '')}</div><div>${field('date', 'date', `type="date" max="${today()}"`, l.date || today())}</div></div>
+  <div class="two"><div><label>${esc(t('itype'))}</label><select name="itype"><option value="pct">${esc(t('pct'))}</option><option value="fix" ${l.itype === 'fix' ? 'selected' : ''}>${esc(t('fix'))}</option></select></div>
+  <div><label id="ratelbl">${esc(t(l.itype === 'fix' ? 'fixAmt' : 'rate'))}</label><input name="rate" ${num} value="${esc(l.rate ?? '')}"></div></div>
+  ${field('paidUpto', 'paidUpto', `type="date" max="${today()}"`, l.paidUpto || '')}<p class="mu">${esc(t('paidUptoHint'))}</p>`;
+function readLoan(v) {
+  const amount = round(+v.amount), rate = +v.rate;
+  if (!(amount > 0)) return t('errAmount');
+  if (v.rate === '' || !(rate >= 0)) return t('errRate');
+  if (!v.date) return t('date');
+  if (v.date > today() || v.paidUpto > today()) return t('errFuture');
+  return { amount, date: v.date, itype: v.itype === 'fix' ? 'fix' : 'pct', rate, paidUpto: v.paidUpto || '' };
+}
+function personDialog(id) {
+  const p = id ? get('P:', id) : {};
+  openForm(t(id ? 'edit' : 'addPerson'), field('name', 'name', 'autocomplete="off"', p.name || '') + field('phone', 'phone', 'type="tel"', p.phone || '') + field('note', 'note', '', p.note || '') + (id ? '' : loanFields({})), v => {
+    const name = v.name.trim(); if (!name) return t('errName');
+    const loan = id ? null : readLoan(v); if (typeof loan === 'string') return loan;
+    const nid = id || uid();
+    put('P:' + nid, { name, phone: v.phone.trim(), note: v.note.trim() });
+    audit(id ? 'person_edit' : 'person_add', { who: name });
+    if (loan) { put('N:' + uid(), { pid: nid, ...loan }); audit('loan_add', { who: name, amt: loan.amount, date: loan.date }); pid = nid; tab = 'person'; history.pushState(null, '', hashFor()); }
+  });
+}
+function loanDialog(id) {
+  const l = id ? get('N:', id) : {}, who = get('P:', id ? l.pid : pid).name;
+  openForm(t(id ? 'editLoan' : 'addLoan'), loanFields(l) + (id ? `<p class="mu">${esc(t('rateHint'))}</p>` : ''), v => {
+    const loan = readLoan(v); if (typeof loan === 'string') return loan;
+    if (id) {
+      const ps = paysOf(id);
+      if (ps.some(p => p.date < loan.date)) return t('errPaid');
+      if (sum(ps, p => p.prin) > loan.amount) return tf('errOver', { amt: money(loan.amount) });
+    }
+    put('N:' + (id || uid()), { pid: id ? l.pid : pid, ...loan });
+    audit(id ? 'loan_edit' : 'loan_add', { who, amt: loan.amount, date: loan.date });
+  }, id && (() => {
+    if (!confirm(t('confirmLoan'))) return false;
+    for (const p of paysOf(id)) remove('T:' + p.id);
+    remove('N:' + id); audit('loan_del', { who, amt: l.amount, date: l.date });
+  }));
+}
+function payDialog(loanId, payId) {
+  const old = payId ? get('T:', payId) : null, id = old ? old.lid : loanId, loan = get('N:', id), who = get('P:', loan.pid).name;
+  const others = () => paysOf(id).filter(p => p.id !== payId);
+  const owed = round(loan.amount - sum(others(), p => p.prin)); // principal still owed without this payment
+  const suggest = old ? old.int : Math.max(0, loanState(loan, others(), today()).due);
+  const form = openForm(`${t(old ? 'editPay' : 'receive')} · ${who}`,
+    `<p class="mu">${esc(t('balance'))}: ${money(owed)} · ${esc(t('intDue'))}: ${money(suggest)}</p>
+    ${field('payDate', 'date', `type="date" min="${loan.date}" max="${today()}"`, old ? old.date : today())}
+    <div class="two"><div>${field('intPaid', 'int', num, suggest || '')}</div><div>${field('prinPaid', 'prin', num, old ? old.prin || '' : '')}</div></div>
+    ${field('note', 'note', '', old ? old.note || '' : '')}<p class="mu" id="preview"></p>`,
+    v => {
+      const int = round(+v.int || 0), prin = round(+v.prin || 0);
+      if (int < 0 || prin < 0 || !(int + prin > 0)) return t('errPay');
+      if (!v.date || v.date < loan.date) return t('errEarly');
+      if (v.date > today()) return t('errFuture');
+      if (prin > owed) return tf('errOver', { amt: money(owed) });
+      put('T:' + (payId || uid()), { lid: id, date: v.date, int, prin, note: v.note.trim() });
+      audit(old ? 'pay_edit' : 'pay_add', { who, int, prin, date: v.date });
+    }, old && (() => {
+      if (!confirm(t('confirmPay'))) return false;
+      remove('T:' + payId); audit('pay_del', { who, int: old.int, prin: old.prin, date: old.date });
+    }));
+  if (!form) return;
+  const preview = () => { // show the effect before saving
+    const v = Object.fromEntries(new FormData(form)), int = +v.int || 0, prin = +v.prin || 0;
+    if (!v.date) return;
+    const s = loanState(loan, [...others(), { date: v.date, int, prin }], today());
+    $('#preview').textContent = prin > 0 && prin === owed ? tf('closing', { amt: money(Math.max(0, s.due + int)) }) + ' · ' + tf('after', { p: money(s.balance), i: money(s.due) }) : tf('after', { p: money(s.balance), i: money(s.due) });
+  };
+  form.oninput = preview; preview();
+}
+function delPerson() {
+  const p = book().find(x => x.id === pid);
+  if (p.loans.some(l => !l.st.closed)) return alert(t('cannotDel'));
+  if (!confirm(t('confirmPerson'))) return;
+  // closed loans and their payments stay, so past monthly totals remain correct; the person is only hidden
+  remove('P:' + pid); audit('person_del', { who: p.name }); go('home');
+}
+
+/* ---------- monthly report ---------- */
+const shiftMonth = (m, n) => addMonths(m + '-01', n).slice(0, 7);
+const personName = id => { const r = recs.get('P:' + id); return r ? r.d.name : '?'; }; // deleted people keep their name in history
+function monthData(m) {
+  const day = today(), loans = all('N:'), pays = all('T:');
+  const charged = sum(loans, l => sum(loanState(l, pays.filter(p => p.lid === l.id), day).charges.filter(c => c.date.startsWith(m)), c => c.amt));
+  const inMonth = pays.filter(p => p.date.startsWith(m)).sort((a, b) => b.date.localeCompare(a.date));
+  return { charged, pays: inMonth, int: sum(inMonth, p => p.int), prin: sum(inMonth, p => p.prin), lent: sum(loans.filter(l => l.date.startsWith(m)), l => l.amount) };
+}
+function monthView() {
+  const d = monthData(ym), cur = today().slice(0, 7);
+  const title = new Date(ym + '-01T00:00:00').toLocaleDateString(lang === 'ta' ? 'ta-IN' : 'en-IN', { month: 'long', year: 'numeric' });
+  const pend = book().filter(p => p.due > 0).sort((a, b) => b.due - a.due);
+  const loanById = id => (recs.get('N:' + id) || { d: {} }).d;
+  return `<div class="date"><button class="btn sec" data-act="shift" data-v="-1">‹</button><div class="grow card" style="margin:0;text-align:center;font-weight:600">${esc(title)}</div><button class="btn sec" data-act="shift" data-v="1" ${ym >= cur ? 'disabled' : ''}>›</button></div>
+    <div class="stats two2">${stat(d.charged, 'charged')}${stat(d.int, 'gotInt')}${stat(d.prin, 'gotPrin')}${stat(d.lent, 'newLent')}</div>
+    <div class="secthead">${esc(t('payments'))}</div><div class="card">${d.pays.length ? `<table><thead><tr><th>${esc(t('name'))}</th><th>${esc(t('intPaid'))}</th><th>${esc(t('prinPaid'))}</th></tr></thead><tbody>${d.pays.map(p => `<tr data-act="person" data-id="${esc(loanById(p.lid).pid)}"><td>${esc(personName(loanById(p.lid).pid))}<div class="mu">${dmy(p.date)}</div></td><td>${money(p.int)}</td><td>${money(p.prin)}</td></tr>`).join('')}</tbody></table>` : `<div class="empty">${esc(t('none'))}</div>`}</div>
+    <div class="secthead">${esc(t('pendingList'))}</div><div class="card">${pend.length ? pend.map(p => `<div class="row sp lrow" data-act="person" data-id="${esc(p.id)}"><span class="name">${esc(p.name)}</span><span class="mu">${dmy(p.since)}</span><b class="amt-ex">${money(p.due)}</b></div>`).join('') : `<div class="empty">${esc(t('upToDate'))}</div>`}</div>
+    <button class="btn sec full" data-act="csv">⬇ ${esc(t('export'))}</button>`;
+}
+function exportCSV() {
+  const b = book(), loans = new Map(all('N:').map(l => [l.id, l]));
+  const rows = [[t('name'), t('phone'), t('date'), t('amount'), t('itype'), t('rate'), t('balance'), t('intDue')],
+    ...b.flatMap(p => p.loans.map(l => [p.name, p.phone, dmy(l.date), l.amount, t(l.itype), l.rate, l.st.balance, l.st.due])),
+    [], [t('payDate'), t('name'), t('intPaid'), t('prinPaid'), t('note')],
+    ...all('T:').sort((a, b) => a.date.localeCompare(b.date)).map(p => [dmy(p.date), personName((loans.get(p.lid) || {}).pid), p.int, p.prin, p.note])];
+  // text starting with = + - @ would run as a formula in a spreadsheet
+  const cell = c => { let s = String(c ?? ''); if (typeof c === 'string' && /^[=+\-@]/.test(s)) s = "'" + s; return `"${s.replace(/"/g, '""')}"`; };
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['﻿' + rows.map(r => r.map(cell).join(',')).join('\n')], { type: 'text/csv' }));
+  a.download = `lending_${today()}.csv`; a.click();
+}
+
+/* ---------- change history, settings ---------- */
+const fmtT = u => `${dmy(istDate.format(new Date(u)))}, ${new Date(u).toLocaleTimeString(lang === 'ta' ? 'ta-IN' : 'en-IN', { timeZone: TZ, hour: '2-digit', minute: '2-digit' })}`;
+function logText(o) {
+  return esc(tf('log_' + o.act, { who: o.who, date: dmy(o.date), amt: money(+o.amt || 0), int: money(+o.int || 0), prin: money(+o.prin || 0) }));
+}
+function logView() {
+  const items = live('G:').sort((a, b) => b.u - a.u).slice(0, 300);
+  return `<div class="row" style="margin-bottom:10px"><button class="btn sec sm" data-act="tab" data-v="set">‹ ${esc(t('back'))}</button></div>` +
+    (items.length ? items.map(r => `<div class="card"><div>${logText(r.d)}</div><div class="mu">${esc(r.b)} · ${fmtT(r.u)}</div></div>`).join('') : `<div class="empty">${esc(t('noLog'))}</div>`);
+}
+function setView() {
+  return `<div class="card"><label style="margin-top:0">${esc(t('yourName'))}</label><input id="uname" value="${esc(meta.user)}"><p class="mu" style="margin-bottom:0">${esc(t('yourNameHint'))}</p></div>
+    <button class="btn sec full" style="margin-bottom:10px" data-act="tab" data-v="log">🕘 ${esc(t('auditLog'))}</button>
+    <div class="card"><label style="margin-top:0">${esc(t('language'))}</label>
+      <div class="gsel"><button class="${meta.lang === 'en' ? 'on' : ''}" data-act="lang" data-v="en">English</button><button class="${meta.lang === 'ta' ? 'on' : ''}" data-act="lang" data-v="ta">தமிழ்</button></div>
+      <button class="btn sec sm full" style="margin-top:8px;${!meta.lang ? 'font-weight:800;outline:2px solid var(--g)' : ''}" data-act="lang" data-v="">🌐 ${esc(t('auto'))}</button></div>
+    <div class="card" id="synccard"><label style="margin-top:0">${esc(t('server'))}</label><input id="srv" value="${esc(meta.server)}" placeholder="https://example.com">
+      <label>${esc(t('key'))}</label><input id="key" type="password" value="${esc(meta.key)}">
+      ${syncErr && syncMsg ? `<p class="err">⚠ ${esc(syncMsg)}</p>` : ''}
+      <p class="mu">${esc(t('lastSync'))}: ${meta.lastSync ? fmtT(meta.lastSync) : esc(t('never'))} · ${pendingCount()} ${esc(t('pending'))}</p>
+      <button class="btn full" data-act="sync">⟳ ${esc(t('syncNow'))}</button></div>`;
+}
+
+/* ---------- events ---------- */
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const { act, v, id } = b.dataset;
+  if (act === 'tab') go(v);
+  else if (act === 'person') { pid = id; go('person'); }
+  else if (act === 'addperson') personDialog();
+  else if (act === 'editperson') personDialog(pid);
+  else if (act === 'delperson') delPerson();
+  else if (act === 'addloan') loanDialog();
+  else if (act === 'editloan') loanDialog(id);
+  else if (act === 'pay') payDialog(id);
+  else if (act === 'editpay') payDialog(null, id);
+  else if (act === 'shift') { ym = shiftMonth(ym, +v); history.replaceState(null, '', hashFor()); render(); }
+  else if (act === 'csv') exportCSV();
+  else if (act === 'sync') sync(true);
+  else if (act === 'syncbtn') { if (syncErr) go('set'); else sync(true); }
+  else if (act === 'lang') { saveMeta('lang', v); lang = v || detectLang(); render(); }
+});
+document.addEventListener('input', e => { if (e.target.id === 'q') { q = e.target.value; drawPeople(); } });
+document.addEventListener('change', e => {
+  const el = e.target;
+  if (el.name === 'itype') $('#ratelbl').textContent = t(el.value === 'fix' ? 'fixAmt' : 'rate');
+  else if (el.id === 'uname') { const n = el.value.trim(); if (!n) { el.value = meta.user; return; } saveMeta('user', n); toast(t('saved')); }
+  else if (el.id === 'srv') { saveMeta('server', el.value.trim()); newConnection(); }
+  else if (el.id === 'key') { saveMeta('key', el.value); newConnection(); }
+});
+// a new server or key: fetch everything again, and offer it every record this phone has
+function newConnection() {
+  saveMeta('mode', 'probe'); saveMeta('since', 0);
+  for (const r of recs.values()) { r.dirty = 1; idbPut('rec', r); }
+  sync(true);
+}
+
+function askName() {
+  const dlg = $('#namedlg');
+  if (meta.user || dlg.open) return;
+  dlg.innerHTML = `<form method="dialog" id="nameform"><h2>${esc(t('yourName'))}</h2><p class="mu">${esc(t('yourNameHint'))}</p>
+    <input name="n" required autofocus><div class="row" style="margin-top:14px"><span class="grow"></span><button class="btn">${esc(t('save'))}</button></div></form>`;
+  $('#nameform').onsubmit = e => {
+    const n = new FormData(e.target).get('n').trim();
+    if (!n) return e.preventDefault();
+    saveMeta('user', n); render(); toast(t('saved'));
+  };
+  dlg.showModal();
+}
+
+/* ---------- boot ---------- */
+(async () => {
+  await load();
+  ym = today().slice(0, 7);
+  readHash();
+  render();
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+  if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
+  sync();
+})();

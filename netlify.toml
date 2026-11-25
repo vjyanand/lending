@@ -1,0 +1,13 @@
+[build]
+  publish = "public"
+
+[build.environment]
+  NODE_VERSION = "22" # @netlify/blobs needs Node 22.12 or newer
+
+[functions]
+  directory = "netlify/functions"
+
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"

@@ -1,0 +1,14 @@
+# Lending Book
+
+Money lent, monthly interest and repayments. Offline-first phone web app (English / Tamil) with sync.
+
+## Run on this computer
+    npm start        # http://localhost:3001
+    npm test         # loan maths
+
+## Put it online (Netlify)
+Deploy this folder, and set the environment variable `SYNC_KEY` to a long secret (sync refuses to work without it).
+Optional: `VIEW_KEY` for a read-only key. Enter the key in the app under Settings.
+
+## How interest is calculated
+See the comment at the top of `public/calc.js`.
