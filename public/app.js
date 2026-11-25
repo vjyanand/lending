@@ -58,7 +58,7 @@ const tf = (k, v) => t(k).replace(/\{(\w+)\}/g, (m, x) => v[x] ?? '');
 /* ---------- storage (IndexedDB, everything cached in memory) ---------- */
 // record: {k, d:{...}, u:updatedAt, del:0|1, dirty:0|1, b:user}
 // keys:  P:<id> person | N:<id> loan {pid} | T:<id> payment {lid} | G:… change history
-let idb; const recs = new Map(); const meta = { mode: 'edit', remind: null, clockOffset: 0, user: '', lang: '', since: 0, server: '', key: '', lastSync: 0 };
+let idb; const recs = new Map(); const meta = { mode: 'edit', remind: null, clockOffset: 0, user: '', lang: '', since: 0, dbId: '', server: '', key: '', lastSync: 0 };
 function openDB() {
   return new Promise((res, rej) => {
     const r = indexedDB.open('lending-db', 1);
@@ -127,13 +127,16 @@ function book() {
 /* ---------- sync ---------- */
 let syncing = false, syncTimer, syncErr = false, syncMsg = '';
 const pendingCount = () => (ro() ? 0 : [...recs.values()].filter(r => r.dirty).length);
-function scheduleSync() { updateSyncBtn(); clearTimeout(syncTimer); syncTimer = setTimeout(sync, 1500); }
+function scheduleSync(ms = 1500) { updateSyncBtn(); clearTimeout(syncTimer); syncTimer = setTimeout(sync, ms); }
+// `again`: something changed while a sync was running. `loading`: still downloading the first copy, page by page.
+// `connection` goes up when the server or key changes, so a reply from the old one is thrown away.
+let again = false, loading = false, connection = 0;
 async function sync(manual) {
-  if (syncing) return;
+  if (syncing) { again = true; return; }
   if (!navigator.onLine) { if (manual === true) toast(t('offline')); return; }
-  syncing = true; syncErr = false; updateSyncBtn();
-  const abort = new AbortController(), timeout = setTimeout(() => abort.abort(), 30000);
-  const url = (meta.server || '').replace(/\/$/, '') + '/api/sync';
+  syncing = true; again = false; syncErr = false; updateSyncBtn();
+  const abort = new AbortController(), timeout = setTimeout(() => abort.abort(), 30000); // a hung request must not block later syncs
+  const url = (meta.server || '').replace(/\/$/, '') + '/api/sync', conn = connection;
   try {
     const queue = meta.mode === 'edit' ? [...recs.values()].filter(r => r.dirty) : [], sent = queue.slice(0, 500), t0 = Date.now();
     const res = await fetch(url, {
@@ -142,25 +145,51 @@ async function sync(manual) {
       body: JSON.stringify({ since: meta.since, records: sent.map(({ k, d, u, del, b }) => ({ k, d, u, del, b })) }),
     });
     if (!res.ok) throw new Error('HTTP ' + res.status + (res.status === 404 ? ' (no sync server at this address)' : res.status === 401 ? ' (wrong sync key)' : res.status === 503 ? ' (server busy or SYNC_KEY not set)' : ''));
-    const out = await res.json().catch(() => { throw new Error('unexpected reply (not the sync server)'); });
-    if (out.now) saveMeta('clockOffset', out.now - Math.round((t0 + Date.now()) / 2));
-    for (const s of out.mode === 'view' ? [] : sent) { const cur = recs.get(s.k); if (cur && cur.u === s.u) { cur.dirty = 0; idbPut('rec', cur); } }
-    const others = new Set(), first = !meta.since; // names of other people whose changes just arrived
-    for (const r of out.records) {
-      const cur = recs.get(r.k);
-      // a read-only phone can't send anything, so the server's copy always wins there
-      if (!cur || !cur.dirty || out.mode === 'view') { if (!first && r.b && r.b !== meta.user) others.add(r.b); const n = { k: r.k, d: r.d, u: r.u, del: r.del, b: r.b, dirty: 0 }; recs.set(r.k, n); idbPut('rec', n); }
+    const out = await res.json().catch(() => null);
+    if (!SyncCore.validReply(out)) throw new Error('unexpected reply (not the sync server)');
+    if (conn !== connection) again = true;
+    else {
+      if (out.now) saveMeta('clockOffset', out.now - Math.round((t0 + Date.now()) / 2));
+      const mode = out.mode === 'view' ? 'view' : 'edit', modeChanged = mode !== meta.mode;
+      if (SyncCore.wasReset(meta, out)) { // the server's data was replaced or rolled back: compare everything again
+        saveMeta('mode', mode);
+        await startOver(out.dbId || '');
+        again = true;
+      } else {
+        const first = !meta.since || loading;
+        const { writes, changed } = SyncCore.applyReply(recs, sent, out);
+        const next = { mode, since: out.seq, dbId: out.dbId || meta.dbId, lastSync: Date.now() };
+        await SyncCore.commit(idb, writes, next, mode === 'view');
+        if (conn === connection) Object.assign(meta, next);
+        loading = first && !!out.more;
+        // more to download, more to upload, or a new connection that has just been allowed to upload
+        if (out.more || queue.length > sent.length || (modeChanged && pendingCount())) again = true;
+        syncMsg = '';
+        if (modeChanged || changed.length) render(true);
+        const others = first ? [] : [...new Set(changed.map(r => r.b).filter(b => b && b !== meta.user))]; // whose changes just arrived
+        if (others.length) toast(t('updatedBy') + ' ' + others.slice(0, 3).join(', '), 3000);
+      }
     }
-    const mode = out.mode === 'view' ? 'view' : 'edit', modeChanged = mode !== meta.mode; saveMeta('mode', mode);
-    syncMsg = ''; saveMeta('since', out.seq); saveMeta('lastSync', Date.now());
-    if (modeChanged || out.records.length) render(true);
-    if (queue.length > sent.length) scheduleSync();
-    if (others.size) toast(t('updatedBy') + ' ' + [...others].slice(0, 3).join(', '), 3000);
   } catch (e) {
     syncErr = true; syncMsg = e instanceof TypeError || e.name === 'AbortError' ? 'cannot reach server' : e.message;
     if (manual === true) toast(t('syncFail') + ' · ' + syncMsg);
+  } finally {
+    clearTimeout(timeout); syncing = false;
+    if (again && !syncErr) scheduleSync(200); // after a failure the regular timer retries
+    updateSyncBtn(); if (tab === 'set') render(true);
   }
-  clearTimeout(timeout); syncing = false; updateSyncBtn(); if (tab === 'set') render(true);
+}
+// Forget the sync position and (if allowed to write) offer the server every record on this phone; newest wins.
+function startOver(dbId) {
+  const writes = meta.mode === 'view' ? [] : [...recs.values()].map(r => ({ ...r, dirty: 1 }));
+  for (const r of writes) recs.set(r.k, r);
+  Object.assign(meta, { since: 0, dbId });
+  return SyncCore.commit(idb, writes, { since: 0, dbId }, false);
+}
+// a different server or key: download everything again, and upload what it doesn't have
+function newConnection() {
+  connection++; saveMeta('mode', 'probe');
+  startOver('').catch(() => {}).then(() => sync(true));
 }
 function updateSyncBtn() {
   const b = $('#syncbtn'), p = pendingCount();
@@ -171,7 +200,8 @@ function updateSyncBtn() {
 addEventListener('online', () => { updateSyncBtn(); sync(); });
 addEventListener('offline', updateSyncBtn);
 setInterval(() => { if (document.visibilityState === 'visible' ? navigator.onLine : pendingCount()) sync(); }, 15000);
-document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && navigator.onLine) sync(); });
+// sync on coming back, and send anything unsent the moment the app is left
+document.addEventListener('visibilitychange', () => { if (navigator.onLine && (document.visibilityState === 'visible' || pendingCount())) sync(); });
 
 /* ---------- UI shell ---------- */
 // URLs: #/people, #/person/<id>, #/monthly/<yyyy-mm>, #/report/<from>/<to>, #/settings, #/help, #/log
@@ -610,13 +640,6 @@ document.addEventListener('change', e => {
   else if (el.id === 'srv') { saveMeta('server', el.value.trim()); newConnection(); }
   else if (el.id === 'key') { saveMeta('key', el.value); newConnection(); }
 });
-// a new server or key: fetch everything again, and offer it every record this phone has
-function newConnection() {
-  saveMeta('mode', 'probe'); saveMeta('since', 0);
-  for (const r of recs.values()) { r.dirty = 1; idbPut('rec', r); }
-  sync(true);
-}
-
 function askName() {
   const dlg = $('#namedlg');
   if (meta.user || dlg.open) return;

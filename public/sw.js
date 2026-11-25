@@ -1,5 +1,5 @@
-const CACHE = 'lending-v7'; // bump when the app files change
-const SHELL = ['./', 'index.html', 'calc.js', 'app.js', 'style.css', 'manifest.webmanifest', 'icon.svg'];
+const CACHE = 'lending-v8'; // bump when the app files change
+const SHELL = ['./', 'index.html', 'sync-core.js', 'calc.js', 'app.js', 'style.css', 'manifest.webmanifest', 'icon.svg'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));

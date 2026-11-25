@@ -3,6 +3,7 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const { serverSync } = require('./public/sync-core.js');
 
 const PORT = process.env.PORT || 3001;
 const KEY = process.env.SYNC_KEY || '';
@@ -12,13 +13,17 @@ const PUB = path.join(__dirname, 'public');
 
 fs.mkdirSync(path.dirname(DATA_FILE), { recursive: true });
 let db = { seq: 0, records: {} };
-try { db = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8')); } catch {}
+try { db = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8')); }
+catch (e) { // only a missing file means "start empty": never write over data that can't be read
+  if (e.code !== 'ENOENT') { console.error('Cannot read ' + DATA_FILE + ': ' + e.message + '\nFix or restore this file, then start again.'); process.exit(1); }
+}
 
 function save() {
   const tmp = DATA_FILE + '.tmp';
-  fs.writeFileSync(tmp, JSON.stringify(db));
+  fs.writeFileSync(tmp, JSON.stringify(db), { flush: true });
   fs.renameSync(tmp, DATA_FILE);
 }
+let unsaved = false; // a failed save is retried before anything else is confirmed
 
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
@@ -33,26 +38,19 @@ function sync(req, res) {
     if (VIEW_KEY && given === VIEW_KEY) mode = 'view';
     else { res.writeHead(401); return res.end('bad key'); }
   }
-  let body = '';
-  req.on('data', c => { body += c; if (body.length > 20e6) req.destroy(); });
+  const chunks = []; let size = 0;
+  req.on('data', c => { chunks.push(c); size += c.length; if (size > 20e6) req.destroy(); });
   req.on('end', () => {
     let msg;
-    try { msg = JSON.parse(body); } catch { res.writeHead(400); return res.end('bad json'); }
-    const since = Number(msg.since) || 0;
-    let changed = false;
-    const newer = new Set(); // sent records the server didn't take: the phone must get the winning copy back
-    for (const r of mode === 'edit' ? msg.records || [] : []) { // view-only keys can never write
-      if (!r || typeof r.k !== 'string') continue;
-      const cur = db.records[r.k];
-      if (!cur || r.u > cur.u) { // last-write-wins
-        db.records[r.k] = { k: r.k, d: r.d, u: r.u, del: r.del ? 1 : 0, b: String(r.b || ''), seq: ++db.seq };
-        changed = true;
-      } else if (r.u !== cur.u || JSON.stringify(r.d) !== JSON.stringify(cur.d)) newer.add(r.k);
+    try { msg = JSON.parse(Buffer.concat(chunks).toString('utf8')); } catch {} // decode once, so no character is split
+    if (!msg || typeof msg !== 'object') { res.writeHead(400); return res.end('bad json'); }
+    const { changed, reply } = serverSync(db, msg, mode, Date.now());
+    if (changed || unsaved) {
+      try { save(); unsaved = false; }
+      catch (e) { unsaved = true; console.error('save failed: ' + e.message); res.writeHead(500); return res.end('could not save'); }
     }
-    if (changed) save();
-    const out = Object.values(db.records).filter(r => r.seq > since || newer.has(r.k));
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ seq: db.seq, now: Date.now(), mode, records: out }));
+    res.end(JSON.stringify(reply));
   });
 }
 
